@@ -101,4 +101,9 @@ class Role
 
         return $this;
     }
+
+    public function isCustomer(): bool
+    {
+        return $this -> getCode() == self::CUSTOMER;
+    }
 }

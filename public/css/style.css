@@ -11,8 +11,7 @@
 }
 .main {
   width: 60%;
-  background: #444446;
-  margin: 25px 20% 0 20%;
+  margin: 25px 20% 200px 20%;
 }
 .resume {
   width: 100%;
@@ -22,12 +21,19 @@
   display: flex;
   justify-content: space-between;
   padding: 20px;
+  margin-bottom: 20px;
 }
 .block-resume {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-items: normal;
 }
+
+.resume .block-resume:last-child span {
+  text-align: end;
+}
+
 .resume-img {
   background: #0a98c0;
   width: 150px;

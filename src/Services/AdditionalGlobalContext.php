@@ -22,7 +22,9 @@ class AdditionalGlobalContext
     {
         $this->tokenStorage = $tokenStorage;
         $this->em = $em;
-        $this->user = $this -> tokenStorage -> getToken() -> getUser();
+        if ($token = $tokenStorage -> getToken()) {
+            $this->user = $token -> getUser();
+        }
     }
 
     public function getRoles(): Collection

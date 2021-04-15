@@ -31,6 +31,9 @@ class MainController extends AbstractController
         $resumes = $user -> getResumes();
         $activeRole = $additionalContext -> getActiveRole();
         # TODO Разные $resumes в зависимости от роли
+        if ($activeRole -> getCode() == Role::CUSTOMER) {
+            $resumes = $user -> getResumeToOwners();
+        }
 
         return $this -> render(
             'main/main.html.twig',

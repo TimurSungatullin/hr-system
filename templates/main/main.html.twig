@@ -2,22 +2,11 @@
 {% block body %}
     {% include 'includes/header.html.twig' %}
     <div class="main">
-        <div class="resume">
-            <div class="block-resume">
-                <span>Вакансия</span>
-                <span class="resume-fio">ФИО</span>
-                <span></span>
-            </div>
-            <img alt="123" class="resume-img">
-            <div class="block-resume">
-                <span></span>
-                <span></span>
-                <span>
-                    Статус и дата
-                </span>
-            </div>
-        </div>
         {% for resume in resumes %}
+            {% if userInfo.activeRole.isCustomer %}
+                {% set is_new = not resume.isRead %}
+                {% set resume = resume.resume %}
+            {% endif %}
             <a href="{{ path('resume_detail', {'id': resume.id }) }}">
                 <div class="resume">
                     <div class="block-resume">
@@ -27,7 +16,7 @@
                     </div>
                     <img alt="123" class="resume-img">
                     <div class="block-resume">
-                        <span></span>
+                        <span class="is-new-resume">{% if is_new %} New! {% endif %}</span>
                         <span></span>
                         <span>
                             {{ resume.getLastStatus().status.name }} {{ resume.getLastStatus().date|date('d.m.y') }}
@@ -36,10 +25,12 @@
                 </div>
             </a>
         {% endfor %}
-        <a href="{{ path('add_resume') }}">
-            <button>
-                Добавить резюме
-            </button>
-        </a>
+        {% if not userInfo.activeRole.isCustomer %}
+            <a href="{{ path('add_resume') }}">
+                <button>
+                    Добавить резюме
+                </button>
+            </a>
+        {% endif %}
     </div>
 {% endblock %}
