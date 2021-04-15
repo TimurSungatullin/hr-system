@@ -11,7 +11,7 @@ class StatusFixtures extends Fixture
 {
     public function load(ObjectManager $manager)
     {
-        $status_names = array(
+        $statusNames = array(
             1 => 'Резюме',
             2 => 'Телефонное интервью',
             3 => 'Встреча (первичная)',
@@ -20,7 +20,7 @@ class StatusFixtures extends Fixture
             6 => 'Отказ',
         );
 
-        foreach ($status_names as $name) {
+        foreach ($statusNames as $name) {
             $status = new Status();
             $status->setName($name);
             $manager->persist($status);
