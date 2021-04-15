@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    {% include 'includes/header.html.twig' %}
+    <div class="main">
+        {{ form_start(form, {'attr': {'class': 'form-add-resume'}}) }}
+        <div class="my-custom-class-for-errors">
+            {{ form_errors(form) }}
+        </div>
+            <div class="resume-main">
+                <input type="file">
+                <div class="field">
+                    <label class="field-label" for="vacancy">
+                        Вакансия
+                    </label>
+                    <select name="vacancy">
+                        <option value="0">---</option>
+                        {% for hrVacancy in user.vacancyHRs %}
+                            <option value="{{ hrVacancy.vacancy.id }}">{{ hrVacancy.vacancy.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="field">
+                    <label class="field-label" for="wage">
+                        ЗП
+                    </label>
+                    {{ form_widget(form.wage, {'attr': {'class': 'field-input form-control'}}) }}
+                </div>
+            </div>
+            <div class="field">
+                <label class="field-label" for="secondName">
+                    Фамилия
+                </label>
+                {{ form_widget(form.secondName, {'attr': {'class': 'field-input form-control'}}) }}
+                </div>
+            <div class="field">
+                <label class="field-label" for="firstName">
+                    Имя
+                </label>
+                {{ form_widget(form.firstName, {'attr': {'class': 'field-input form-control'}}) }}
+                </div>
+            <div class="field">
+                <label class="field-label" for="patronymic">
+                    Отчество
+                </label>
+                {{ form_widget(form.patronymic, {'attr': {'class': 'field-input form-control'}}) }}
+            </div>
+            <div class="field">
+                <label class="field-label" for="phone">
+                    Номер телефона
+                </label>
+                {{ form_widget(form.phone, {'attr': {'class': 'field-input form-control'}}) }}
+            </div>
+            <div class="field">
+                <label class="field-label" for="birthdate">
+                    Дата рождения
+                </label>
+                {{ form_widget(form.birthdate, {'attr': {'class': 'field-input form-control'}}) }}
+            </div>
+            <div class="field">
+                <label class="field-label" for="city">
+                    Город
+                </label>
+                {{ form_widget(form.city, {'attr': {'class': 'field-input form-control'}}) }}
+            </div>
+            <div class="field">
+                <label class="field-label" for="graduation">
+                    Образование
+                </label>
+                {{ form_widget(form.graduation, {'attr': {'class': 'field-input form-control'}}) }}
+            </div>
+            <div class="field">
+                <label class="field-label" for="workExperience">
+                    Опыт работы
+                </label>
+                {{ form_widget(form.workExperience, {'attr': {'class': 'field-input form-control'}}) }}
+            </div>
+            <input type="submit" value="Отправить">
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

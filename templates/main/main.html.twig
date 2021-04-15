@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    {% include 'includes/header.html.twig' %}
+    <div class="main">
+        <div class="resume">
+            <div class="block-resume">
+                <span>Вакансия</span>
+                <span class="resume-fio">ФИО</span>
+                <span></span>
+            </div>
+            <img alt="123" class="resume-img">
+            <div class="block-resume">
+                <span></span>
+                <span></span>
+                <span>
+                    Статус и дата
+                </span>
+            </div>
+        </div>
+        {% for resume in resumes %}
+            <a href="{{ path('resume_detail', {'id': resume.id }) }}">
+                <div class="resume">
+                    <div class="block-resume">
+                        <span>{{ resume.getVacancy().name }}</span>
+                        <span class="resume-fio">{{ resume.getFullNameInitials() }}</span>
+                        <span></span>
+                    </div>
+                    <img alt="123" class="resume-img">
+                    <div class="block-resume">
+                        <span></span>
+                        <span></span>
+                        <span>
+                            {{ resume.getLastStatus().status.name }} {{ resume.getLastStatus().date|date('d.m.y') }}
+                        </span>
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+        <a href="{{ path('add_resume') }}">
+            <button>
+                Добавить резюме
+            </button>
+        </a>
+    </div>
+{% endblock %}

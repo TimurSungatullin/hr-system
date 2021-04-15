@@ -1,0 +1,39 @@
+easy_admin:
+    site_name: HR System
+    user:
+        display_name: true
+        display_avatar: true
+        name_property_path: 'fullName'
+    design:
+        assets:
+            css:
+                - 'css/admin.css'
+            favicon: '/assets/img/favicon.png'
+        menu:
+            - { route: 'homepage', label: 'Вернуться на сайт', icon: 'home' }
+            - { entity: 'User', label: 'Пользователи', icon: 'user' }
+    entities:
+        User:
+            class: App\Entity\User
+            label: 'Пользователи'
+            form:
+                title: 'Добавление пользователя'
+                fields:
+                    - { property: 'firstName', label: 'Имя' }
+                    - { property: 'secondName', label: 'Фамилия' }
+                    - { property: 'patronymic', label: 'Отчество'}
+                    - { property: 'email', type: 'email', label: 'Электронная почта' }
+                    - { property: 'phone', label: 'Номер телефона' }
+                    - { property: 'username', label: 'Логин' }
+                    - { property: 'plainPassword', label: 'Пароль', type: 'password' }
+                    - { property: 'userRoles', type_options: {'by_reference': false} }
+            search:
+                fields: [ 'firstName', 'secondName', 'phone' ]
+            list:
+                fields:
+                    - { property: 'fullName', label: 'ФИО' }
+                    - { property: 'email', type: 'email', label: 'Электронная почта' }
+                    - { property: 'phone', label: 'Номер телефона' }
+                    - { property: 'username', label: 'Логин' }
+            edit:
+                title: 'Редактирования пользователя'

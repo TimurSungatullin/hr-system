@@ -1,0 +1,181 @@
+{% extends 'base.html.twig' %}
+
+{% block javascripts %}
+    <script>
+        $(document).ready(function () {
+            $(".navbar-toggler").hide();
+            $(".navbar-dark").click(
+                function(){
+                    $(".navbar-toggler").stop().fadeToggle(0);}
+            );
+
+            $('.js-example-basic-multiple').select2();
+
+        });
+
+        function addComment(e) {
+            let form = $('#addComment');
+            let data = form.serializeArray();
+            form[0].reset();
+            $.ajax({
+                url: "{{ path('add_comment') }}",
+                data: data,
+                method: 'POST',
+                success: function (data, status) {
+                    data = JSON.parse(data);
+                    // Текстовое сообщение
+                    let newBlock = $('.block').clone()[0];
+                    newBlock.getElementsByTagName('textarea')[0].innerText = data['comment']
+                    $(newBlock).prependTo(".resume-all-comments");
+                }
+            })
+        }
+
+        function sendResume() {
+            let data = {
+                'owners': $('.modal-body select option:selected').val(),
+                'resume': {{ resume.id }},
+            }
+            $.ajax({
+                url: "{{ path('send_resume') }}",
+                data: data,
+                method: 'POST',
+                success: function (data, status) {
+                    debugger;
+                    $('#sendOwnerModal').modal('hide');
+                    $('.modal-body select').val(null).trigger('change');
+                }
+            })
+        }
+
+    </script>
+{% endblock %}
+
+{% block body %}
+    {% include 'includes/header.html.twig' %}
+    <div class="main">
+        <div class="resume-buttons">
+            <div></div>
+            <div>
+                <button>Пригласить</button>
+                <button>Отказать</button>
+            </div>
+            <div class="navbar-dark">
+                <span class="navbar-toggler-icon"></span>
+            </div>
+            <div class="navbar-toggler">
+                <ul class="submenu">
+                    <li><span data-toggle="modal" data-target="#sendOwnerModal">
+                        Отправить заказчику
+                    </span></li>
+                    <li>Удалить</li>
+                </ul>
+            </div>
+        </div>
+        <div class="resume-info">
+            <div>
+                <img src="" alt="123" class="resume-img">
+                <span>{{ resume.getFullName() }}</span>
+                <span>{{ resume.getAge() }}</span>
+            </div>
+            <div>
+                <span> {{ resume.getVacancy().name }} <br> {{ resume.wage }} </span>
+                <span></span>
+            </div>
+            <div></div>
+            <div>
+                <span></span>
+                <span></span>
+                <span> {{ resume.getLastStatus().status.name }} <br> {{ resume.getLastStatus().date|date('d.m.y') }} </span>
+            </div>
+        </div>
+        <div class="resume-comments">
+            <div class="resume-add-comments">
+                <form method="post" id="addComment">
+                    <div>
+                        <div>
+                            <span>Ваша оценка: </span>
+                            <div class="rating-area">
+                                <input type="radio" id="star-5" name="rating" value="5">
+                                <label for="star-5" title="Оценка «5»"></label>
+                                <input type="radio" id="star-4" name="rating" value="4">
+                                <label for="star-4" title="Оценка «4»"></label>
+                                <input type="radio" id="star-3" name="rating" value="3">
+                                <label for="star-3" title="Оценка «3»"></label>
+                                <input type="radio" id="star-2" name="rating" value="2">
+                                <label for="star-2" title="Оценка «2»"></label>
+                                <input type="radio" id="star-1" name="rating" value="1">
+                                <label for="star-1" title="Оценка «1»"></label>
+                            </div>
+                        </div>
+                        <div>
+                            <select name="status">
+                                <option selected>---</option>
+                                {% for status in statuses %}
+                                    <option value="{{ status.id }}">{{ status.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="resume-comment-text">
+                        <textarea name="comment"></textarea>
+                    </div>
+                    <input hidden type="number" value="{{ resume.id }}" name="resume">
+                    <button type="button" onclick="addComment()">
+                        Добавить оценку
+                    </button>
+                </form>
+            </div>
+            <div class="resume-all-comments">
+                {% for rating in ratings %}
+                <div class="block">
+                    <div>
+                        <div>
+                            <span> Оценка HR: </span>
+                            <div class="rating-mini">
+                                {% for i in range(1, 5) %}
+                                    <span {% if i <= rating.score %} class="active" {% endif %}></span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div>
+                            <span>{{ rating.status.name }}</span>
+                        </div>
+                    </div>
+                    <div class="resume-comment-text">
+                            <textarea id="comment" disabled>{{ rating.comment }}</textarea>
+                    </div>
+                    <div>
+                        <span></span>
+                        <span>{{ rating.date|date('d.m.y') }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="modal fade" id="sendOwnerModal" tabindex="-1" role="dialog" aria-labelledby="sendOwnerModalTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Отправить заказчика</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <span>Выберите заказчиков, которым хотите отправить:</span>
+                        <select class="js-example-basic-multiple" name="states[]" multiple="multiple">
+                            {% for owner in owners %}
+                                <option value="{{ owner.id }}">{{ owner.fullName }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button data-dismiss="modal">Close</button>
+                        <button onclick="sendResume()">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

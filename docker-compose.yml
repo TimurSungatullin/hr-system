@@ -1,0 +1,21 @@
+version: '3'
+
+volumes:
+  pgdata-dv:
+  media-dv:
+
+networks:
+  default:
+
+services:
+  dv-db:
+    container_name: hr-db
+    image: postgres:11
+    volumes:
+      - pgdata-dv:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: hr_system
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - 5432:5432

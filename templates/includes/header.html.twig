@@ -1,0 +1,27 @@
+<script>
+    $(document).ready(function () {
+        $('#changeRoles').change(function () {
+            debugger;
+            $.ajax({
+                url: "{{ path('change_role') }}",
+                data: {role: this.selectedOptions[0].value},
+                method: 'POST',
+                success: function () {
+                    location.reload();
+                }
+            })
+        })
+    })
+</script>
+<div class="header">
+    <a href="{{ path('main') }}"><span>{{ userInfo.user.initials }}</span></a>
+    <span>[Статистика]</span>
+    <span>[Фильтр]</span>
+    <select id="changeRoles">
+        {% for role in userInfo.roles %}
+            <option value="{{ role.id }}" {% if role == userInfo.activeRole %} selected {% endif %}>
+                {{ role.name }}
+            </option>
+        {% endfor %}
+    </select>
+</div>

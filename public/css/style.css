@@ -1,0 +1,324 @@
+.header {
+  background: #444446;
+  width: 60%;
+  margin-left: 20%;
+  height: 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+.main {
+  width: 60%;
+  background: #444446;
+  margin: 25px 20% 0 20%;
+}
+.resume {
+  width: 100%;
+  height: 200px;
+  background: #444446;
+  border: 1px SOLID #4c5367;
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+}
+.block-resume {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.resume-img {
+  background: #0a98c0;
+  width: 150px;
+  height: 150px;
+}
+button {
+  background: #666;
+  border: none;
+}
+form {
+  background: #444446;
+}
+h1 {
+  margin-top: 150px;
+}
+.form-add-resume {
+  width: 100%;
+  display: flex;
+  margin: 10px;
+  flex-direction: column;
+}
+.field {
+  margin: 10px;
+}
+.field-label {
+  float: left;
+  width: 150px;
+}
+.field-input {
+  display: block;
+  width: 60%!important;
+  height: calc(1.5em + .75rem + 2px) !important;
+}
+form input {
+  background-color: rgb(59, 59, 59)!important;
+  color: #8a97a0!important;
+  border: none!important;
+}
+form input:focus {
+  color: #8a97a0!important;
+}
+button, input[type=submit] {
+  color: #fff;
+  background-color: #666!important;
+  border: none;
+}
+
+a {
+  color: #fff;
+}
+
+a:hover {
+  color: #fff;
+}
+
+.resume-buttons {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.resume-buttons button {
+  width: 200px;
+  margin: 20px;
+}
+
+.resume-info {
+  display: flex;
+  justify-content: space-between;
+}
+
+.resume-info div {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 25%;
+}
+
+.resume-info div:last-child {
+  align-items: flex-end;
+}
+
+.resume-info div span, .resume-info div img {
+  margin: 20px;
+}
+
+.resume-comments {
+  margin-top: 20px;
+}
+
+.resume-add-comments div, .resume-all-comments div div {
+  display: flex;
+  justify-content: space-between;
+}
+
+.resume-comments div span {
+  margin: 20px;
+}
+
+.resume-comment-text textarea {
+  height: 100px;
+  background-color: #666;
+  resize: none;
+  color: white;
+}
+
+.resume-comments .resume-comment-text {
+  margin: 20px;
+  justify-content: center;
+}
+
+.resume-add-comments {
+  border-top-style: solid;
+  border-top-color: #666;
+  border-bottom-style: solid;
+  border-bottom-color: #666;
+  padding-bottom: 20px;
+  padding-top: 20px;
+}
+
+.resume-add-comments form {
+  max-width: 100%;
+  padding: 0;
+  color: white;
+}
+
+.resume-add-comments select, select {
+  width: 200px;
+  margin: 20px;
+  background-color: #666;
+  color: white;
+}
+
+.resume-add-comments form button {
+  margin-bottom: 10px;
+}
+
+.resume-comments .rating-area {
+  overflow: hidden;
+  margin: 20px 0 20px 0;
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.resume-comments .rating-area:not(:checked) > input {
+  display: none;
+}
+
+.resume-comments .rating-area:not(:checked) > label {
+  float: right;
+  padding: 0;
+  cursor: pointer;
+  font-size: 20px;
+  color: lightgrey;
+  text-shadow: 1px 1px #bbb;
+  margin-bottom: 0;
+}
+
+.resume-comments .rating-area:not(:checked) > label:before {
+  content: '★';
+}
+
+.resume-comments .rating-area > input:checked ~ label {
+  color: gold;
+  text-shadow: 1px 1px #c60;
+}
+
+.resume-add-comments .rating-area:not(:checked) > label:hover,
+.resume-add-comments .rating-area:not(:checked) > label:hover ~ label {
+  color: gold;
+}
+
+.rating-area > input:checked + label:hover,
+.rating-area > input:checked + label:hover ~ label,
+.rating-area > input:checked ~ label:hover,
+.rating-area > input:checked ~ label:hover ~ label,
+.rating-area > label:hover ~ input:checked ~ label {
+  color: gold;
+  text-shadow: 1px 1px goldenrod;
+}
+
+.rate-area > label:active {
+  position: relative;
+}
+
+.rating-mini {
+  display: flex;
+}
+
+.rating-mini span {
+  padding: 0;
+  font-size: 20px;
+  line-height: 1;
+  color: lightgrey;
+}
+
+.rating-mini > span:before {
+  content: '★';
+}
+
+.resume-all-comments .rating-mini span {
+  margin: 20px 0 20px 0;
+}
+
+.rating-mini > span.active {
+  color: gold;
+}
+
+.resume-all-comments > div:nth-child(even) {
+  background-color: rgb(60, 60, 60);
+}
+
+.navbar-dark {
+  margin: 20px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.navbar-toggler {
+  position: absolute;
+  left: 100%;
+  width: 100%;
+  z-index: 10;
+  margin-top: 20px;
+  -webkit-transition: 0.5s ease-in-out;
+  -moz-transition: 0.5s ease-in-out;
+  -o-transition: 0.5s ease-in-out;
+  transition: 0.5s ease-in-out;
+}
+
+.navbar-toggler li {
+  list-style-type: none;
+}
+
+.resume-buttons .navbar-toggler ul {
+  padding-inline-start: 10px;
+}
+
+.resume-buttons .navbar-toggler ul li {
+  margin-bottom: 10px;
+}
+
+.modal-content {
+  background-color: #666;
+}
+
+.modal-content .modal-header > button {
+  width: 10px;
+  height: 10px;
+  margin: 0;
+  padding: 0;
+}
+
+.modal-body > span, .modal-body > select {
+  margin: 10px;
+}
+
+.modal-body .select2 span {
+  background-color: #666;
+  border: none;
+  color: #fff;
+}
+
+.modal-body .select2 span .select2-selection__choice__remove {
+  width: 20px;
+  border-style: none;
+}
+
+.modal-body .select2 ul .select2-selection__choice {
+  background-color: #666;
+  border: 1px SOLID #ccc;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.modal-body .select2 {
+  background-color: #666;
+  border: 1px SOLID;
+  color: #fff;
+  width: 100%!important;
+  margin: 10px 0 0;
+}
+
+.select2-results__option {
+  background-color: #666;
+}
+
+.modal-content .modal-body {
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
