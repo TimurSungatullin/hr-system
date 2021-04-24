@@ -33,4 +33,18 @@ class UserRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
+    /**
+     * @return User[] Returns an array of User objects
+     */
+    public function findHRs()
+    {
+        return $this->createQueryBuilder('u')
+            ->innerJoin('u.userRoles', 'r')
+            ->andWhere('r.code = :val')
+            ->setParameter('val', Role::HR)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
 }

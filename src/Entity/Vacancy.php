@@ -35,21 +35,22 @@ class Vacancy
     private $ratings;
 
     /**
-     * @ORM\OneToMany(targetEntity=VacancyGroup::class, mappedBy="vacancy", orphanRemoval=true)
+     * @ORM\ManyToMany(targetEntity=Group::class, inversedBy="vacancies")
      */
-    private $vacancyGroups;
+    private $groups;
 
     /**
-     * @ORM\OneToMany(targetEntity=VacancyHR::class, mappedBy="vacancy", orphanRemoval=true)
+     * @ORM\ManyToMany(targetEntity=User::class, inversedBy="vacancies")
+     * @ORM\JoinTable(name="vacancy_hr")
      */
-    private $vacancyHRs;
+    private $hrs;
 
     public function __construct()
     {
         $this->historyVacancies = new ArrayCollection();
         $this->ratings = new ArrayCollection();
-        $this->vacancyGroups = new ArrayCollection();
-        $this->vacancyHRs = new ArrayCollection();
+        $this->hrs = new ArrayCollection();
+        $this->groups = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -130,62 +131,62 @@ class Vacancy
     }
 
     /**
-     * @return Collection|VacancyGroup[]
+     * @return Collection|Group[]
      */
-    public function getVacancyGroups(): Collection
+    public function getGroups(): Collection
     {
-        return $this->vacancyGroups;
+        return $this->groups;
     }
 
-    public function addVacancyGroup(VacancyGroup $vacancyGroup): self
+    public function addGroup(Group $group): self
     {
-        if (!$this->vacancyGroups->contains($vacancyGroup)) {
-            $this->vacancyGroups[] = $vacancyGroup;
-            $vacancyGroup->setVacancy($this);
+        if (!$this->groups->contains($group)) {
+            $this->groups[] = $group;
+            $group->addVacancy($this);
         }
 
         return $this;
     }
 
-    public function removeVacancyGroup(VacancyGroup $vacancyGroup): self
+    public function removeGroup(Group $group): self
     {
-        if ($this->vacancyGroups->removeElement($vacancyGroup)) {
-            // set the owning side to null (unless already changed)
-            if ($vacancyGroup->getVacancy() === $this) {
-                $vacancyGroup->setVacancy(null);
-            }
-        }
+        if ($this->groups->removeElement($group)) {
+            $group->removeVacancy($this);
+        };
 
         return $this;
     }
+
 
     /**
-     * @return Collection|VacancyHR[]
+     * @return Collection|User[]
      */
-    public function getVacancyHRs(): Collection
+    public function getHrs(): Collection
     {
-        return $this->vacancyHRs;
+        return $this->hrs;
     }
 
-    public function addVacancyHR(VacancyHR $vacancyHR): self
+    public function addHR(User $hr): self
     {
-        if (!$this->vacancyHRs->contains($vacancyHR)) {
-            $this->vacancyHRs[] = $vacancyHR;
-            $vacancyHR->setVacancy($this);
+        if (!$this->hrs->contains($hr)) {
+            $this->hrs[] = $hr;
+            $hr->addVacancy($this);
         }
 
         return $this;
     }
 
-    public function removeVacancyHR(VacancyHR $vacancyHR): self
+    public function removeHR(User $hr): self
     {
-        if ($this->vacancyHRs->removeElement($vacancyHR)) {
-            // set the owning side to null (unless already changed)
-            if ($vacancyHR->getVacancy() === $this) {
-                $vacancyHR->setVacancy(null);
-            }
-        }
+        if ($this->hrs->removeElement($hr)) {
+            $hr->removeVacancy($this);
+        };
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->getName();
     }
 }

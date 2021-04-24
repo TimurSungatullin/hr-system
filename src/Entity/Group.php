@@ -26,13 +26,20 @@ class Group
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity=VacancyGroup::class, mappedBy="groupId", orphanRemoval=true)
+     * @ORM\ManyToMany(targetEntity=Vacancy::class, mappedBy="groups")
      */
-    private $vacancyGroups;
+    private $vacancies;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=User::class, inversedBy="groups")
+     * @ORM\JoinTable(name="group_hr")
+     */
+    private $hrs;
 
     public function __construct()
     {
-        $this->vacancyGroups = new ArrayCollection();
+        $this->vacancies = new ArrayCollection();
+        $this->hrs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -53,30 +60,59 @@ class Group
     }
 
     /**
-     * @return Collection|VacancyGroup[]
+     * @return Collection|Vacancy[]
      */
-    public function getVacancyGroups(): Collection
+    public function getVacancies(): Collection
     {
-        return $this->vacancyGroups;
+        return $this->vacancies;
     }
 
-    public function addVacancyGroup(VacancyGroup $vacancyGroup): self
+    public function addVacancy(Vacancy $vacancy): self
     {
-        if (!$this->vacancyGroups->contains($vacancyGroup)) {
-            $this->vacancyGroups[] = $vacancyGroup;
-            $vacancyGroup->setGroup($this);
+        if (!$this->vacancies->contains($vacancy)) {
+            $this->vacancies[] = $vacancy;
+            $vacancy->addGroup($this);
         }
 
         return $this;
     }
 
-    public function removeVacancyGroup(VacancyGroup $vacancyGroup): self
+    public function removeVacancy(Vacancy $vacancy): self
     {
-        if ($this->vacancyGroups->removeElement($vacancyGroup)) {
-            // set the owning side to null (unless already changed)
-            if ($vacancyGroup->getGroup() === $this) {
-                $vacancyGroup->setGroup(null);
-            }
+        if ($this->vacancies->removeElement($vacancy)) {
+            $vacancy->removeGroup($this);
+        }
+
+        return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->getName();
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getHrs(): Collection
+    {
+        return $this->hrs;
+    }
+
+    public function addHr(User $hr): self
+    {
+        if (!$this->hrs->contains($hr)) {
+            $this->hrs[] = $hr;
+            $hr->addGroup($this);
+        }
+
+        return $this;
+    }
+
+    public function removeHr(User $hr): self
+    {
+        if ($this->hrs->removeElement($hr)) {
+            $hr->removeGroup($this);
         }
 
         return $this;

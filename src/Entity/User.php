@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 /**
- * @ORM\Table(name="user", schema="public")
+ * @ORM\Table(name="`user`")
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @UniqueEntity("username")
  */
@@ -85,11 +85,6 @@ class User implements UserInterface
     private $ratings;
 
     /**
-     * @ORM\OneToMany(targetEntity=VacancyHR::class, mappedBy="hr", orphanRemoval=true)
-     */
-    private $vacancyHRs;
-
-    /**
      * @ORM\ManyToMany(targetEntity=Role::class, mappedBy="users")
      */
     private $userRoles;
@@ -99,16 +94,27 @@ class User implements UserInterface
      */
     private $meetings;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Vacancy::class, mappedBy="hrs")
+     * @ORM\JoinTable(name="vacancy_hr")
+     */
+    private $vacancies;
+
     private $fullName;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Group::class, mappedBy="hrs")
+     */
+    private $groups;
 
     public function __construct()
     {
         $this->resumes = new ArrayCollection();
         $this->resumeToOwners = new ArrayCollection();
         $this->ratings = new ArrayCollection();
-        $this->vacancyHRs = new ArrayCollection();
         $this->userRoles = new ArrayCollection();
         $this->meetings = new ArrayCollection();
+        $this->groups = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -305,36 +311,6 @@ class User implements UserInterface
         return $this;
     }
 
-    /**
-     * @return Collection|VacancyHR[]
-     */
-    public function getVacancyHRs(): Collection
-    {
-        return $this->vacancyHRs;
-    }
-
-    public function addVacancyHR(VacancyHR $vacancyHR): self
-    {
-        if (!$this->vacancyHRs->contains($vacancyHR)) {
-            $this->vacancyHRs[] = $vacancyHR;
-            $vacancyHR->setHr($this);
-        }
-
-        return $this;
-    }
-
-    public function removeVacancyHR(VacancyHR $vacancyHR): self
-    {
-        if ($this->vacancyHRs->removeElement($vacancyHR)) {
-            // set the owning side to null (unless already changed)
-            if ($vacancyHR->getHr() === $this) {
-                $vacancyHR->setHr(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function getUserRoles(): Collection {
         return $this->userRoles;
     }
@@ -481,12 +457,79 @@ class User implements UserInterface
      */
     public function hasAccessVacancy(Vacancy $vacancy): bool
     {
-        foreach ($this -> vacancyHRs as $vacancyHR) {
-            if ($vacancyHR -> getVacancy() -> getId() == $vacancy -> getId()) {
-                return true;
+        return $this -> getAllVacancy() -> contains($vacancy);
+    }
+
+    /**
+     * @return Collection|Vacancy[]
+     */
+    public function getVacancies(): Collection
+    {
+        return $this->vacancies;
+    }
+
+    public function addVacancy(Vacancy $vacancy): self
+    {
+        if (!$this->vacancies->contains($vacancy)) {
+            $this->vacancies[] = $vacancy;
+            $vacancy->addHR($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVacancy(Vacancy $vacancy): self
+    {
+        if ($this->vacancies->removeElement($vacancy)) {
+            $vacancy->removeHR($this);
+        };
+
+        return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->getFullName();
+    }
+
+    /**
+     * @return Collection|Group[]
+     */
+    public function getGroups(): Collection
+    {
+        return $this->groups;
+    }
+
+    public function addGroup(Group $group): self
+    {
+        if (!$this->groups->contains($group)) {
+            $this->groups[] = $group;
+            $group->addHr($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGroup(Group $group): self
+    {
+        if ($this->groups->removeElement($group)) {
+            $group->removeHr($this);
+        }
+
+        return $this;
+    }
+
+    public function getAllVacancy(): Collection
+    {
+        $allVacancy = $this->getVacancies();
+        foreach ($this -> getGroups() as $group) {
+            foreach ($group -> getVacancies() as $vacancy) {
+                if (!$allVacancy->contains($vacancy)) {
+                    $allVacancy -> add($vacancy);
+                }
             }
         }
 
-        return false;
+        return $allVacancy;
     }
 }

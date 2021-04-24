@@ -12,22 +12,30 @@
 .main {
   width: 60%;
   margin: 25px 20% 200px 20%;
+  background: #444446;
 }
+
 .resume {
   width: 100%;
   height: 200px;
   background: #444446;
-  border: 1px SOLID #4c5367;
   display: flex;
   justify-content: space-between;
   padding: 20px;
+  border-bottom: 20px solid #222226;
+}
+
+.resume-main img {
+  border-radius: 50%;
   margin-bottom: 20px;
 }
+
 .block-resume {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: normal;
+  width: 150px;
 }
 
 .resume .block-resume:last-child span {
@@ -35,9 +43,9 @@
 }
 
 .resume-img {
-  background: #0a98c0;
   width: 150px;
   height: 150px;
+  border-radius: 50%;
 }
 button {
   background: #666;

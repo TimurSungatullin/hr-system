@@ -60,12 +60,12 @@ final class Version20210314141835 extends AbstractMigration
         $this->addSql('CREATE TABLE status (id INT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE "user" (id INT NOT NULL, first_name VARCHAR(100) NOT NULL, second_name VARCHAR(100) NOT NULL, patronymic VARCHAR(100) DEFAULT NULL, email VARCHAR(255) DEFAULT NULL, phone VARCHAR(100) NOT NULL, username VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE vacancy (id INT NOT NULL, name VARCHAR(100) NOT NULL, PRIMARY KEY(id))');
-        $this->addSql('CREATE TABLE vacancy_group (id INT NOT NULL, vacancy_id_id INT NOT NULL, group_id_id INT NOT NULL, PRIMARY KEY(id))');
-        $this->addSql('CREATE INDEX IDX_B48E3BA7A60AE135 ON vacancy_group (vacancy_id_id)');
-        $this->addSql('CREATE INDEX IDX_B48E3BA72F68B530 ON vacancy_group (group_id_id)');
-        $this->addSql('CREATE TABLE vacancy_hr (id INT NOT NULL, hr_id_id INT NOT NULL, vacancy_id_id INT NOT NULL, PRIMARY KEY(id))');
-        $this->addSql('CREATE INDEX IDX_AEF4FCD45965760D ON vacancy_hr (hr_id_id)');
-        $this->addSql('CREATE INDEX IDX_AEF4FCD4A60AE135 ON vacancy_hr (vacancy_id_id)');
+        $this->addSql('CREATE TABLE vacancy_group (vacancy_id INT NOT NULL, group_id INT NOT NULL, PRIMARY KEY(vacancy_id, group_id))');
+        $this->addSql('CREATE INDEX IDX_B48E3BA7A60AE135 ON vacancy_group (vacancy_id)');
+        $this->addSql('CREATE INDEX IDX_B48E3BA72F68B530 ON vacancy_group (group_id)');
+        $this->addSql('CREATE TABLE vacancy_hr (hr_id INT NOT NULL, vacancy_id INT NOT NULL, PRIMARY KEY(hr_id, vacancy_id))');
+        $this->addSql('CREATE INDEX IDX_AEF4FCD45965760D ON vacancy_hr (hr_id)');
+        $this->addSql('CREATE INDEX IDX_AEF4FCD4A60AE135 ON vacancy_hr (vacancy_id)');
         $this->addSql('ALTER TABLE history_vacancy ADD CONSTRAINT FK_8D534057A60AE135 FOREIGN KEY (vacancy_id_id) REFERENCES vacancy (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE history_vacancy ADD CONSTRAINT FK_8D534057E3B35E3F FOREIGN KEY (resume_id_id) REFERENCES resume (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE meeting ADD CONSTRAINT FK_F515E139E3B35E3F FOREIGN KEY (resume_id_id) REFERENCES resume (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
@@ -80,10 +80,10 @@ final class Version20210314141835 extends AbstractMigration
         $this->addSql('ALTER TABLE resume_to_owner ADD CONSTRAINT FK_6ABBFDB98FDDAB70 FOREIGN KEY (owner_id_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE role_user ADD CONSTRAINT FK_332CA4DDD60322AC FOREIGN KEY (role_id) REFERENCES role (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE role_user ADD CONSTRAINT FK_332CA4DDA76ED395 FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('ALTER TABLE vacancy_group ADD CONSTRAINT FK_B48E3BA7A60AE135 FOREIGN KEY (vacancy_id_id) REFERENCES vacancy (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('ALTER TABLE vacancy_group ADD CONSTRAINT FK_B48E3BA72F68B530 FOREIGN KEY (group_id_id) REFERENCES "group" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('ALTER TABLE vacancy_hr ADD CONSTRAINT FK_AEF4FCD45965760D FOREIGN KEY (hr_id_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('ALTER TABLE vacancy_hr ADD CONSTRAINT FK_AEF4FCD4A60AE135 FOREIGN KEY (vacancy_id_id) REFERENCES vacancy (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE vacancy_group ADD CONSTRAINT FK_B48E3BA7A60AE135 FOREIGN KEY (vacancy_id) REFERENCES vacancy (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE vacancy_group ADD CONSTRAINT FK_B48E3BA72F68B530 FOREIGN KEY (group_id) REFERENCES "group" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE vacancy_hr ADD CONSTRAINT FK_AEF4FCD45965760D FOREIGN KEY (hr_id) REFERENCES "user" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE vacancy_hr ADD CONSTRAINT FK_AEF4FCD4A60AE135 FOREIGN KEY (vacancy_id) REFERENCES vacancy (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
     }
 
     public function down(Schema $schema) : void

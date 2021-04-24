@@ -14,6 +14,7 @@ use App\Entity\StatusHistory;
 use App\Entity\Vacancy;
 use App\Form\ResumeFormType;
 use DateTime;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -48,6 +49,17 @@ class ResumeController extends AbstractController
         $entityManager = $this->getDoctrine()->getManager();
         if ($form->isSubmitted() && $form->isValid()) {
             $resume -> setHr($user);
+
+            $photo = $resume->filePhoto;
+
+            $photoName = md5(uniqid()) . '.' . $photo -> guessExtension();
+
+            $photo->move(
+                $_SERVER['UPLOAD_FILE_DIR'],
+                $photoName
+            );
+
+            $resume -> setPhoto($photoName);
 
             $vacancyId = $request->request->get('vacancy');
             $vacancy = $entityManager

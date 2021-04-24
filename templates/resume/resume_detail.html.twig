@@ -74,9 +74,14 @@
         </div>
         <div class="resume-info">
             <div>
-                <img src="" alt="123" class="resume-img">
+                {% if resume.photo %}
+                    {% set photo_url = 'assets/img/resume/' ~ resume.photo %}
+                {% else %}
+                    {% set photo_url = 'assets/img/no_photo.png' %}
+                {% endif %}
+                <img src="{{ asset(photo_url) }}" class="resume-img">
                 <span>{{ resume.getFullName() }}</span>
-                <span>{{ resume.getAge() }}</span>
+                <span>{{ resume.getAge() }} лет</span>
             </div>
             <div>
                 <span> {{ resume.getVacancy().name }} <br> {{ resume.wage }} </span>

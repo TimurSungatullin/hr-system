@@ -8,10 +8,12 @@ easy_admin:
         assets:
             css:
                 - 'css/admin.css'
-            favicon: '/assets/img/favicon.png'
+            favicon: '/assets/img/favicon.ico'
         menu:
             - { route: 'homepage', label: 'Вернуться на сайт', icon: 'home' }
             - { entity: 'User', label: 'Пользователи', icon: 'user' }
+            - { entity: 'Vacancy', label: 'Вакансии' }
+            - { entity: 'Group', label: 'Группы вакансий'}
     entities:
         User:
             class: App\Entity\User
@@ -26,7 +28,7 @@ easy_admin:
                     - { property: 'phone', label: 'Номер телефона' }
                     - { property: 'username', label: 'Логин' }
                     - { property: 'plainPassword', label: 'Пароль', type: 'password' }
-                    - { property: 'userRoles', type_options: {'by_reference': false} }
+                    - { property: 'userRoles', label: 'Роли', type_options: {'by_reference': false} }
             search:
                 fields: [ 'firstName', 'secondName', 'phone' ]
             list:
@@ -37,3 +39,43 @@ easy_admin:
                     - { property: 'username', label: 'Логин' }
             edit:
                 title: 'Редактирования пользователя'
+
+        Vacancy:
+            class: App\Entity\Vacancy
+            controller: App\Controller\Admin\VacancyController
+            label: 'Ваканасии'
+            form:
+                title: 'Добавление вакансии'
+                fields:
+                    - { property: 'name', label: 'Название' }
+                    - { property: 'groups', label: 'Группы', type_options: {'by_reference': false} }
+                    - { property: 'hrs', label: 'Кому доступна вакансия', type_options: {'by_reference': false} }
+            search:
+                fields: [ 'name' ]
+            list:
+                fields:
+                    - { property: 'name', label: 'Название' }
+                    - { property: 'groups', label: 'Группы' }
+                    - { property: 'hrs', label: 'Кому доступна вакансия' }
+            edit:
+                title: 'Редактирования вакансии'
+
+        Group:
+            class: App\Entity\Group
+            controller: App\Controller\Admin\GroupController
+            label: 'Группы вакансий'
+            form:
+                title: 'Добавление группы'
+                fields:
+                    - { property: 'name', label: 'Название' }
+                    - { property: 'vacancies', label: 'Вакансии', type_options: {'by_reference': false} }
+                    - { property: 'hrs', label: 'Кому доступна вакансия' }
+            search:
+                fields: [ 'name' ]
+            list:
+                fields:
+                    - { property: 'name', label: 'Название' }
+                    - { property: 'vacancies', label: 'Вакансии' }
+                    - { property: 'hrs', label: 'Кому доступна вакансия' }
+            edit:
+                title: 'Редактирования вакансии'

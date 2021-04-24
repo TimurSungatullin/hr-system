@@ -104,6 +104,18 @@ class Resume
      */
     private $statusHistories;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $photo;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $file;
+
+    public $filePhoto;
+
     public function __construct()
     {
         $this->historyVacancies = new ArrayCollection();
@@ -446,6 +458,30 @@ class Resume
         $datetime = $this -> birthDate;
         $interval = $datetime->diff(new DateTime());
         return $interval->format("%Y");
+    }
+
+    public function getPhoto()
+    {
+        return $this->photo;
+    }
+
+    public function setPhoto(?string $photo): self
+    {
+        $this->photo = $photo;
+
+        return $this;
+    }
+
+    public function getFile(): ?string
+    {
+        return $this->file;
+    }
+
+    public function setFile(?string $file): self
+    {
+        $this->file = $file;
+
+        return $this;
     }
 
 }

@@ -1,4 +1,25 @@
 {% extends 'base.html.twig' %}
+{% block javascripts %}
+    <script>
+        $(document).ready(function () {
+            $('#resume_form_filePhoto').change(function (e) {
+                let file = e.target.files;
+                if (FileReader && file && file.length) {
+                    let fr = new FileReader();
+                    fr.onload = function () {
+                        debugger;
+                        document.getElementById('photo').src = fr.result
+                    }
+
+                    fr.readAsDataURL(file[0]);
+                }
+                else {
+                    document.getElementById('photo').src = "{{ asset('assets/img/no_photo.png') }}";
+                }
+            })
+        });
+    </script>
+{% endblock %}
 {% block body %}
     {% include 'includes/header.html.twig' %}
     <div class="main">
@@ -7,15 +28,18 @@
             {{ form_errors(form) }}
         </div>
             <div class="resume-main">
-                <input type="file">
+                <div>
+                    <img src="{{ asset('assets/img/no_photo.png') }}" width="150" height="150" id="photo" alt="User photo">
+                    {{ form_widget(form.filePhoto, {'attr': {'id': 'photo-load'}}) }}
+                </div>
                 <div class="field">
                     <label class="field-label" for="vacancy">
                         Вакансия
                     </label>
-                    <select name="vacancy">
+                    <select name="vacancy" class="field-input form-control">
                         <option value="0">---</option>
-                        {% for hrVacancy in user.vacancyHRs %}
-                            <option value="{{ hrVacancy.vacancy.id }}">{{ hrVacancy.vacancy.name }}</option>
+                        {% for vacancy in userInfo.user.allVacancy %}
+                            <option value="{{ vacancy.id }}">{{ vacancy.name }}</option>
                         {% endfor %}
                     </select>
                 </div>

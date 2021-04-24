@@ -3,6 +3,7 @@
     {% include 'includes/header.html.twig' %}
     <div class="main">
         {% for resume in resumes %}
+            {% set is_new = false %}
             {% if userInfo.activeRole.isCustomer %}
                 {% set is_new = not resume.isRead %}
                 {% set resume = resume.resume %}
@@ -14,7 +15,12 @@
                         <span class="resume-fio">{{ resume.getFullNameInitials() }}</span>
                         <span></span>
                     </div>
-                    <img alt="123" class="resume-img">
+                    {% if resume.photo %}
+                        {% set photo_url = 'assets/img/resume/' ~ resume.photo %}
+                    {% else %}
+                        {% set photo_url = 'assets/img/no_photo.png' %}
+                    {% endif %}
+                    <img class="resume-img" src="{{ asset(photo_url) }}">
                     <div class="block-resume">
                         <span class="is-new-resume">{% if is_new %} New! {% endif %}</span>
                         <span></span>

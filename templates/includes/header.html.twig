@@ -15,8 +15,8 @@
 </script>
 <div class="header">
     <a href="{{ path('main') }}"><span>{{ userInfo.user.initials }}</span></a>
-    <span>[Статистика]</span>
-    <span>[Фильтр]</span>
+    <span><img width="40" height="40" src="{{ asset('assets/img/statistic.png') }}"></span>
+    <span><img width="40" height="40" src="{{ asset('assets/img/filter.png') }}"></span>
     <select id="changeRoles">
         {% for role in userInfo.roles %}
             <option value="{{ role.id }}" {% if role == userInfo.activeRole %} selected {% endif %}>
