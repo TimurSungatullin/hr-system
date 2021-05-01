@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% include 'includes/header.html.twig' %}
+    <div class="main statistic">
+        <div>
+            <div class="title">
+                <span>Анализ данных</span>
+            </div>
+            <div class="filters">
+                <div>
+                    <label>
+                        <span>За период:</span>
+                    </label>
+                    <input type="datetime-local" name="start">
+                    -
+                    <input type="datetime-local" name="end">
+                </div>
+                <div>
+                    <label>
+                        <span>Вакансии</span>
+                    </label>
+                    <select>
+                        <option>---</option>
+                        <option>Python-разработчик</option>
+                    </select>
+                </div>
+            </div>
+            <div class="button">
+                <button>Показать</button>
+            </div>
+        </div>
+        <div class="info">
+            <div>
+                <label>
+                    Всего резюме
+                </label>
+                <span>2</span>
+            </div>
+            <div>
+                <label>
+                    Приглашений
+                </label>
+                <span>0</span>
+            </div>
+            <div>
+                <label>
+                    Проведенных встреч
+                </label>
+                <span>1</span>
+            </div>
+            <div>
+                <label>
+                    Отказов
+                </label>
+                <span>0</span>
+            </div>
+            <div>
+                <label>
+                    Средняя оценка HR
+                </label>
+                <span>5.0</span>
+            </div>
+            <div>
+                <label>
+                    Средняя оценка заказчика
+                </label>
+                <span>4.5</span>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -17,7 +17,7 @@ class VacancyController extends EasyAdminController
 
         $hrs = $this->getDoctrine()
             ->getRepository(User::class)
-            ->findHRs();
+            ->findByRole(Role::HR);
 
         $formBuilder->add('hrs', EntityType::class, [
             'class' => 'App\Entity\User',

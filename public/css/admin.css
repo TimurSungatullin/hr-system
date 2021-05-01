@@ -1,0 +1,47 @@
+body {
+    font-family: "Open Sans", sans-serif;
+    color: #fff!important;
+    background-color: #222226;
+}
+
+.main-sidebar {
+    background-color: #444446;
+    color: #fff;
+    padding: 10px;
+    height: 200px;
+}
+
+.sidebar-menu .fa {
+    color: #fff;
+}
+
+.main-header #header-logo a {
+    color: #fff;
+}
+
+td, a, h1, span, label {
+    color: #fff!important;
+}
+
+.content-wrapper, .content {
+    background-color: #444446;
+    color: #fff;
+}
+
+.content-footer {
+    background-color: #444446!important;
+    color: #fff!important;
+}
+
+.pagination .page-link {
+    background-color: #444446!important;
+}
+
+.btn {
+    background-color: #666!important;
+}
+
+input {
+    background-color: rgb(59, 59, 59)!important;
+    color: #fff!important;
+}

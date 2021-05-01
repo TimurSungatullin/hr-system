@@ -8,6 +8,7 @@ use App\Entity\HistoryVacancy;
 use App\Entity\Rating;
 use App\Entity\Resume;
 use App\Entity\ResumeToOwner;
+use App\Entity\Role;
 use App\Entity\Status;
 use App\Entity\User;
 use App\Entity\StatusHistory;
@@ -146,8 +147,12 @@ class ResumeController extends AbstractController
 
         $owners = $entityManager
             -> getRepository(User::class)
-            -> findCustomers()
+            -> findByRole(Role::CUSTOMER)
         ;
+
+        $users = $entityManager
+            -> getRepository(User::class)
+            -> findExcludeOne($user -> getId());
 
         return $this->render(
             'resume/resume_detail.html.twig',
@@ -156,6 +161,7 @@ class ResumeController extends AbstractController
                 'statuses' => $statuses,
                 'ratings' => $ratings,
                 'owners' => $owners,
+                'users' => $users,
             ]
         );
     }

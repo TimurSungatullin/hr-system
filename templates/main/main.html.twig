@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 {% block body %}
-    {% include 'includes/header.html.twig' %}
+    {% include 'includes/header.html.twig' with {'is_main': true } %}
     <div class="main">
         {% for resume in resumes %}
             {% set is_new = false %}

@@ -1,7 +1,15 @@
 {% extends 'base.html.twig' %}
 {% block javascripts %}
     <script>
+
         $(document).ready(function () {
+            $(".navbar-toggler").hide();
+            $(".navbar-dark").click(
+                function(){
+                    $(".navbar-toggler").stop().fadeToggle(0);
+                }
+            );
+
             $('#resume_form_filePhoto').change(function (e) {
                 let file = e.target.files;
                 if (FileReader && file && file.length) {
@@ -16,8 +24,30 @@
                 else {
                     document.getElementById('photo').src = "{{ asset('assets/img/no_photo.png') }}";
                 }
-            })
+            });
+
+            (function() {
+
+                'use strict';
+
+                $('.photo-load').each(function() {
+                    var $input = $(this),
+                        $label = $input.next('.js-labelFile'),
+                        labelVal = $label.html();
+
+                    $input.on('change', function(element) {
+                        var fileName = '';
+                        if (element.target.value) fileName = element.target.value.split('\\').pop();
+                        fileName ? $label.addClass('has-file').find('.js-fileName').html(fileName) : $label.removeClass('has-file').html(labelVal);
+                    });
+                });
+
+            })();
         });
+
+        function triggerInput() {
+            $('#resume_form_filePhoto').trigger('click');
+        }
     </script>
 {% endblock %}
 {% block body %}
@@ -28,26 +58,42 @@
             {{ form_errors(form) }}
         </div>
             <div class="resume-main">
-                <div>
+                <div class="avatar">
                     <img src="{{ asset('assets/img/no_photo.png') }}" width="150" height="150" id="photo" alt="User photo">
-                    {{ form_widget(form.filePhoto, {'attr': {'id': 'photo-load'}}) }}
-                </div>
-                <div class="field">
-                    <label class="field-label" for="vacancy">
-                        Вакансия
+                    {{ form_widget(form.filePhoto, {'attr': {'class': 'photo-load', 'accept': 'image/*'}}) }}
+                    <label for="file" onclick="triggerInput()" class="btn btn-tertiary js-labelFile">
+                        <i class="icon fa fa-check"></i>
+                        <span class="js-fileName">Загрузить файл</span>
                     </label>
-                    <select name="vacancy" class="field-input form-control">
-                        <option value="0">---</option>
-                        {% for vacancy in userInfo.user.allVacancy %}
-                            <option value="{{ vacancy.id }}">{{ vacancy.name }}</option>
-                        {% endfor %}
-                    </select>
                 </div>
-                <div class="field">
-                    <label class="field-label" for="wage">
-                        ЗП
-                    </label>
-                    {{ form_widget(form.wage, {'attr': {'class': 'field-input form-control'}}) }}
+                <div class="flex-column">
+                    <div class="field">
+                        <label class="field-label" for="vacancy">
+                            Вакансия
+                        </label>
+                        <select name="vacancy" class="field-input form-control">
+                            <option value="0">---</option>
+                            {% for vacancy in userInfo.user.allVacancy %}
+                                <option value="{{ vacancy.id }}">{{ vacancy.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label class="field-label" for="wage">
+                            ЗП
+                        </label>
+                        {{ form_widget(form.wage, {'attr': {'class': 'field-input form-control'}}) }}
+                    </div>
+                </div>
+                <div>
+                    <div class="navbar-dark">
+                        <span class="navbar-toggler-icon"></span>
+                    </div>
+                </div>
+                <div class="navbar-toggler">
+                    <ul class="submenu">
+                        <li>Загрузить резюме</li>
+                    </ul>
                 </div>
             </div>
             <div class="field">

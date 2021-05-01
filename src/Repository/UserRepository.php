@@ -20,29 +20,22 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
-    /**
-    * @return User[] Returns an array of User objects
-    */
-    public function findCustomers()
+    public function findByRole(string $role)
     {
         return $this->createQueryBuilder('u')
             ->innerJoin('u.userRoles', 'r')
             ->andWhere('r.code = :val')
-            ->setParameter('val', Role::CUSTOMER)
+            ->setParameter('val', $role)
             ->getQuery()
             ->getResult()
-        ;
+            ;
     }
 
-    /**
-     * @return User[] Returns an array of User objects
-     */
-    public function findHRs()
+    public function findExcludeOne(int $userId)
     {
         return $this->createQueryBuilder('u')
-            ->innerJoin('u.userRoles', 'r')
-            ->andWhere('r.code = :val')
-            ->setParameter('val', Role::HR)
+            ->andWhere('u.id != :val')
+            ->setParameter('val', $userId)
             ->getQuery()
             ->getResult()
             ;

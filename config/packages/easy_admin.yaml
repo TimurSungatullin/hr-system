@@ -5,6 +5,8 @@ easy_admin:
         display_avatar: true
         name_property_path: 'fullName'
     design:
+            # 'dark' is the default value
+        brand_color: '#81b9ba'
         assets:
             css:
                 - 'css/admin.css'
