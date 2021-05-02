@@ -91,6 +91,7 @@ class ResumeController extends AbstractController
             $history_status
                 -> setResume($resume)
                 -> setStatus($status)
+                -> setAuthor($user)
             ;
 
             $entityManager -> persist($resume);
@@ -214,19 +215,55 @@ class ResumeController extends AbstractController
             ;
 
             if ($owner) {
-                $resumeToOwner = new ResumeToOwner();
-                $resumeToOwner
-                    -> setResume($resume)
-                    -> setOwner($owner)
-                ;
 
-                $entityManager -> persist($resumeToOwner);
-
-                $entityManager->flush();
+                $entityManager
+                    -> getRepository(ResumeToOwner::class)
+                    -> findOrUpdate($resume, $owner);
             }
 
         }
 
         return new Response();
+    }
+
+    /**
+     * @Route("/change_status", name="resume_change_status")
+     * @param Request $request
+     * @param AuthenticationUtils $authenticationUtils
+     * @return Response
+     */
+    public function changeStatus(
+        Request $request,
+        AuthenticationUtils $authenticationUtils
+    ) {
+        $user = $this->getUser();
+
+        $statusId = $request->request->get('status');
+        $resumeId = $request->request->get('resume');
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $status = $entityManager
+            -> getRepository(Status::class)
+            -> find($statusId)
+        ;
+
+        $resume = $entityManager
+            -> getRepository(Resume::class)
+            -> find($resumeId)
+        ;
+
+        $history = new StatusHistory();
+        $history
+            -> setResume($resume)
+            -> setStatus($status)
+            -> setAuthor($user)
+        ;
+
+        $entityManager -> persist($history);
+
+        $entityManager -> flush();
+
+        return new Response();
+
     }
 }

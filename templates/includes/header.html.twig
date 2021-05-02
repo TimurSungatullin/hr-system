@@ -1,7 +1,6 @@
 <script>
     $(document).ready(function () {
         $('#changeRoles').change(function () {
-            debugger;
             $.ajax({
                 url: "{{ path('change_role') }}",
                 data: {role: this.selectedOptions[0].value},

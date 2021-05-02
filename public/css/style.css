@@ -180,6 +180,10 @@ a:hover {
   margin: 20px;
 }
 
+.select-status {
+  margin: 0;
+}
+
 .resume-all-comments .block {
   border-bottom: 20px SOLID #222226;
 }
@@ -428,7 +432,7 @@ a:hover {
   align-items: center;
 }
 
-.select-roles {
+.select-roles, .select-status {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;

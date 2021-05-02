@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\Resume;
 use App\Entity\ResumeToOwner;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -17,6 +19,33 @@ class ResumeToOwnerRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, ResumeToOwner::class);
+    }
+
+    public function findOrUpdate(Resume $resume, User $user) {
+        $result = $this -> findOneBy(
+            array(
+                'resume' => $resume,
+                'owner' => $user,
+            )
+        );
+
+        $em = $this -> getEntityManager();
+
+        if (!$result) {
+            $obj = new ResumeToOwner();
+            $obj -> setOwner($user) -> setResume($resume);
+            $result = $obj;
+        }
+
+        else {
+            $result -> setIsRead(false);
+        }
+
+        $em -> persist($result);
+        $em -> flush();
+
+        return $result;
+
     }
 
     // /**

@@ -11,6 +11,21 @@
 
             $('.js-example-basic-multiple').select2();
 
+            $('#changeStatus').change(function () {
+                $.ajax({
+                    url: "{{ path('resume_change_status') }}",
+                    data: {
+                        status: this.selectedOptions[0].value,
+                        resume: {{ resume.id }},
+                    },
+                    method: 'POST',
+                    success: function () {
+                        // Просто галочку нарисовать на время?
+                        location.reload();
+                    }
+                })
+            })
+
         });
 
         function addComment(e) {
@@ -91,7 +106,19 @@
             <div>
                 <span></span>
                 <span></span>
-                <span> {{ resume.getLastStatus().status.name }} <br> {{ resume.getLastStatus().date|date('d.m.y') }} </span>
+                <div>
+                    <select id="changeStatus" class="select-status">
+                        {% for status in statuses %}
+                            <option value="{{ status.id }}"
+                                    {% if resume.getLastStatus() and status.id == resume.getLastStatus().status.id %}
+                                        selected
+                                    {% endif %}>
+                                {{ status.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <span>{{ resume.getLastStatus().date|date('d.m.y') }}</span>
+                </div>
             </div>
         </div>
         <div class="resume-comments">
