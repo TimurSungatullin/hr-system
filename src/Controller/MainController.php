@@ -28,7 +28,7 @@ class MainController extends AbstractController
         AdditionalGlobalContext $additionalContext): Response
     {
         $user = $this -> getUser();
-        $resumes = $user -> getResumes();
+        $resumes = $user -> getActiveResumes();
         $activeRole = $additionalContext -> getActiveRole();
         # TODO Разные $resumes в зависимости от роли
         if ($activeRole -> getCode() == Role::CUSTOMER) {

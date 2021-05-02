@@ -116,6 +116,11 @@ class Resume
 
     public $filePhoto;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $deleted;
+
     public function __construct()
     {
         $this->historyVacancies = new ArrayCollection();
@@ -123,6 +128,7 @@ class Resume
         $this->ratings = new ArrayCollection();
         $this->meetings = new ArrayCollection();
         $this->statusHistories = new ArrayCollection();
+        $this->deleted = false;
     }
 
     public function getId(): ?int
@@ -480,6 +486,18 @@ class Resume
     public function setFile(?string $file): self
     {
         $this->file = $file;
+
+        return $this;
+    }
+
+    public function getDeleted(): ?bool
+    {
+        return $this->deleted;
+    }
+
+    public function setDeleted(bool $deleted): self
+    {
+        $this->deleted = $deleted;
 
         return $this;
     }

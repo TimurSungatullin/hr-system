@@ -229,6 +229,13 @@ class User implements UserInterface
         return $this->resumes;
     }
 
+    public function getActiveResumes(): array
+    {
+        return array_filter($this->resumes -> toArray(), function ($resume) {
+            return !$resume -> getDeleted();
+        });
+    }
+
     public function addResume(Resume $resume): self
     {
         if (!$this->resumes->contains($resume)) {

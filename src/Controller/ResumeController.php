@@ -169,17 +169,27 @@ class ResumeController extends AbstractController
 
     /**
      * @Route("/{id}", name="resume_delete", methods={"DELETE"})
-     * @param Request $request
-     * @param AuthenticationUtils $authenticationUtils
      * @param string $id
      * @return Response
      */
     public function deleteResume(
-        Request $request,
-        AuthenticationUtils $authenticationUtils,
         string $id): Response
     {
+        $entityManager = $this->getDoctrine()->getManager();
+        $resume = $entityManager
+            -> getRepository(Resume::class)
+            -> find($id)
+        ;
 
+        if (!$resume) {
+        }
+
+        $resume -> setDeleted(true);
+
+        $entityManager -> persist($resume);
+        $entityManager -> flush();
+
+        return new Response();
     }
 
     /**
