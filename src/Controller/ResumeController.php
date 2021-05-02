@@ -5,6 +5,7 @@ namespace App\Controller;
 
 
 use App\Entity\HistoryVacancy;
+use App\Entity\Meeting;
 use App\Entity\Rating;
 use App\Entity\Resume;
 use App\Entity\ResumeToOwner;
@@ -216,8 +217,6 @@ class ResumeController extends AbstractController
             #TODO raise 404 ошибки или редирект на главную с сообщением
         }
 
-        $owners = explode(',', $owners);
-
         foreach ($owners as $ownerId) {
             $owner = $entityManager
                 -> getRepository(User::class)
@@ -275,5 +274,59 @@ class ResumeController extends AbstractController
 
         return new Response();
 
+    }
+
+    /**
+     * @Route("/invite", name="invite")
+     * @param Request $request
+     * @param AuthenticationUtils $authenticationUtils
+     * @return Response
+     */
+    public function inviteToMeet(
+        Request $request,
+        AuthenticationUtils $authenticationUtils): Response
+    {
+        $user = $this->getUser();
+        $users = $request->request->get('users');
+        $resumeId = $request->request->get('resume');
+        $date = $request->request->get('date');
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $resume = $entityManager
+            -> getRepository(Resume::class)
+            -> find($resumeId)
+        ;
+
+        if (!$resume) {
+            #TODO raise 404 ошибки или редирект на главную с сообщением
+        }
+
+        $date = Datetime::createFromFormat('Y-m-d\TH:i', $date);
+
+        if (!$date) {
+            # TODO некорректная дата
+        }
+
+        $meet = new Meeting();
+        $meet
+            -> setResume($resume)
+            -> setDateMeet($date)
+        ;
+
+        foreach ($users as $userId) {
+            $user = $entityManager
+                -> getRepository(User::class)
+                -> find($userId)
+            ;
+
+            if ($user) {
+                $meet -> addUser($user);
+            }
+        }
+
+        $entityManager -> persist($meet);
+        $entityManager -> flush();
+
+        return new Response();
     }
 }

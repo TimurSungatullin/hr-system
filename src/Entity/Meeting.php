@@ -81,6 +81,7 @@ class Meeting
     {
         if (!$this->users->contains($user)) {
             $this->users[] = $user;
+            $user -> addMeeting($this);
         }
 
         return $this;
@@ -88,7 +89,9 @@ class Meeting
 
     public function removeUser(User $user): self
     {
-        $this->users->removeElement($user);
+        if ($this->users->removeElement($user)) {
+            $user -> removeMeeting($this);
+        }
 
         return $this;
     }

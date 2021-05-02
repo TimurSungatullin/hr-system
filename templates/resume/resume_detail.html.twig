@@ -48,15 +48,34 @@
 
         function sendResume() {
             let data = {
-                'owners': $('.modal-body select option:selected').val(),
+                'owners': $('.modal-body select').val(),
                 'resume': {{ resume.id }},
             }
+            debugger;
             $.ajax({
                 url: "{{ path('send_resume') }}",
                 data: data,
                 method: 'POST',
                 success: function (data, status) {
                     $('#sendOwnerModal').modal('hide');
+                    $('.modal-body select').val(null).trigger('change');
+                }
+            })
+        }
+
+        function inviteToMeet() {
+            let data = {
+                'users': $('#inviteToMeet .modal-body select').val(),
+                'resume': {{ resume.id }},
+                'date': $('#dateMeet').val(),
+            }
+            debugger;
+            $.ajax({
+                url: "{{ path('invite') }}",
+                data: data,
+                method: 'POST',
+                success: function (data, status) {
+                    $('#inviteToMeet').modal('hide');
                     $('.modal-body select').val(null).trigger('change');
                 }
             })
@@ -237,12 +256,12 @@
                         </select>
                         <div>
                             <label>Дата и время</label>
-                            <input type="datetime-local">
+                            <input type="datetime-local" name="dateMeet" id="dateMeet">
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button data-dismiss="modal">Close</button>
-                        <button onclick="sendResume()">Save changes</button>
+                        <button onclick="inviteToMeet()">Save changes</button>
                     </div>
                 </div>
             </div>
