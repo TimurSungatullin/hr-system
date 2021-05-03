@@ -21,15 +21,28 @@ class RatingRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param $resume Resume
+     * @param int $resumeId
+     * @param int|null $limit
+     * @param int|null $offset
      * @return Rating[] Returns an array of Rating objects
      */
-    public function findByResume(Resume $resume): array
+    public function findByResume(int $resumeId, $limit = null, $offset = null): array
     {
-        return $this->createQueryBuilder('r')
+        $query = $this->createQueryBuilder('r')
             ->andWhere('r.resume = :val')
-            ->setParameter('val', $resume -> getId())
+            ->setParameter('val', $resumeId)
             ->orderBy('r.date', 'DESC')
+        ;
+
+        if ($limit) {
+            $query = $query -> setMaxResults($limit);
+        }
+
+        if ($offset) {
+            $query = $query -> setFirstResult($offset);
+        }
+
+        return $query
             ->getQuery()
             ->getResult()
         ;

@@ -1,7 +1,61 @@
 {% extends 'base.html.twig' %}
+{% block javascripts %}
+    <script>
+        $(document).ready(function () {
+            let filter = $('#filters');
+            filter.hide()
+        });
+
+        function changeFilter() {
+            $('#filters').stop().fadeToggle(0);
+        }
+    </script>
+{% endblock %}
 {% block body %}
     {% include 'includes/header.html.twig' with {'is_main': true } %}
     <div class="main">
+        <div class="resume-filters" id="filters">
+            <form>
+                <div class="title">
+                    <span>Фильтрация</span>
+                </div>
+                <div class="filter">
+                    <div>
+                        <label>
+                            Вакансия
+                        </label>
+                        <select name="vacancy">
+                            <option value="0">---</option>
+                            {% for vacancy in vacancies %}
+                                <option value="{{ vacancy.id }}"
+                                        {% if vacancy.id == app.request.get('vacancy') %}
+                                            selected
+                                        {% endif %}>
+                                    {{ vacancy.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label>
+                            Статус
+                        </label>
+                        <select name="status">
+                            <option value="0">---</option>
+                            {% for status in statuses %}
+                                <option value="{{ status.id }}"
+                                        {% if status.id == app.request.get('status') %}
+                                            selected
+                                        {% endif %}>
+                                    {{ status.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <button type="submit">Показать</button>
+            </form>
+        </div>
         {% for resume in resumes %}
             {% set is_new = false %}
             {% if userInfo.activeRole.isCustomer %}

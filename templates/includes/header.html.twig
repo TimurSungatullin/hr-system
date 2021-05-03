@@ -18,7 +18,7 @@
         <a href="{{ path('show_statistic') }}">
             <span><img width="40" height="40" src="{{ asset('assets/img/statistic.png') }}"></span>
         </a>
-        <span><img width="40" height="40" src="{{ asset('assets/img/filter.png') }}"></span>
+        <span><img class="filter-icon" onclick="changeFilter()" width="40" height="40" src="{{ asset('assets/img/filter.png') }}"></span>
     {% endif %}
     <select id="changeRoles" class="select-roles">
         {% for role in userInfo.roles %}

@@ -210,7 +210,6 @@ a:hover {
 }
 
 .resume-add-comments {
-  padding-bottom: 20px;
   padding-top: 20px;
   border-bottom: 20px SOLID #222226;
 }
@@ -219,6 +218,7 @@ a:hover {
   max-width: 100%;
   padding: 0;
   color: white;
+  margin-bottom: 0;
 }
 
 .resume-add-comments select, select {
@@ -226,10 +226,6 @@ a:hover {
   margin: 20px;
   background-color: rgb(59, 59, 59);
   color: white;
-}
-
-.resume-add-comments form button {
-  margin-bottom: 10px;
 }
 
 .resume-comments .rating-area {
@@ -528,4 +524,43 @@ a:hover {
 .statistic .info label {
   margin: 20px;
   width: 200px;
+}
+
+.loading {
+  background: #222226;
+  display: flex;
+  justify-content: center;
+  border-top: 50px SOLID #222226;
+}
+
+.resume-filters {
+  width: 100%;
+  border-bottom: 40px SOLID #222226;
+}
+
+.resume-filters .title {
+  display: flex;
+  justify-content: center;
+  padding-top: 20px;
+}
+
+.resume-filters .filter {
+  display: flex;
+  flex-direction: column;
+  margin-left: 50px;
+}
+
+.resume-filters .filter > div > label {
+  width: 150px;
+}
+
+.resume-filters > form {
+  min-width: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.filter-icon:hover {
+  cursor: pointer;
 }

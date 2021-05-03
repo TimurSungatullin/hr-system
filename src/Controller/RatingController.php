@@ -92,4 +92,47 @@ class RatingController extends AbstractController
 
         return $this->json($json_rating);
     }
+
+    /**
+     * @Route("/get_comments", name="get_comments")
+     * @param Request $request
+     * @param SerializerInterface $serializer
+     * @return JsonResponse
+     */
+    public function getComments(
+        Request $request,
+        SerializerInterface $serializer): JsonResponse
+    {
+        $start = $request->request->get('start');
+        $resumeId = $request->request->get('resume');
+        $limit = 10;
+
+        $entityManager = $this -> getDoctrine() -> getManager();
+        $resume = $entityManager
+            -> getRepository(Resume::class)
+            -> find($resumeId)
+        ;
+
+        if (!$resume) {
+            # TODO Ошибки
+        }
+
+        $ratings = $entityManager
+            -> getRepository(Rating::class)
+            -> findByResume(
+                $resumeId,
+                $limit,
+                $start
+            )
+        ;
+
+        $json_rating = $serializer->serialize(
+            $ratings,
+            'json',
+            ['groups' => 'add_comment']
+        );
+
+        return $this->json($json_rating);
+
+    }
 }

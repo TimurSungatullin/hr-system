@@ -6,6 +6,8 @@ namespace App\Controller;
 
 use App\Entity\Resume;
 use App\Entity\Role;
+use App\Entity\Status;
+use App\Entity\Vacancy;
 use App\Services\AdditionalGlobalContext;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
@@ -19,12 +21,12 @@ class MainController extends AbstractController
 
     /**
      * @Route("/home", name="main")
-     * @param AuthenticationUtils $authenticationUtils
+     * @param Request $request
      * @param AdditionalGlobalContext $additionalContext
      * @return Response
      */
     public function main(
-        AuthenticationUtils $authenticationUtils,
+        Request $request,
         AdditionalGlobalContext $additionalContext): Response
     {
         $user = $this -> getUser();
@@ -35,10 +37,38 @@ class MainController extends AbstractController
             $resumes = $user -> getResumeToOwners();
         }
 
+        $entityManager = $this->getDoctrine()->getManager();
+        $statuses = $entityManager
+            -> getRepository(Status::class)
+            -> findAll()
+        ;
+
+        $vacancies = $entityManager
+            -> getRepository(Vacancy::class)
+            -> findAll()
+        ;
+
+        $status = $request -> query -> get('status');
+        $vacancy = $request -> query -> get('vacancy');
+
+        if ($status) {
+            $resumes = array_filter($resumes, function ($resume) use ($status) {
+               return $resume->getLastStatus()->getStatus()->getId() == $status;
+            });
+        }
+
+        if ($vacancy) {
+            $resumes = array_filter($resumes, function ($resume) use ($vacancy) {
+                return $resume->getVacancy()->getId() == $vacancy;
+            });
+        }
+
         return $this -> render(
             'main/main.html.twig',
             [
                 'resumes' => $resumes,
+                'vacancies' => $vacancies,
+                'statuses' => $statuses,
             ]
         );
     }

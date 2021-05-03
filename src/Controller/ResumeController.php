@@ -144,7 +144,7 @@ class ResumeController extends AbstractController
 
         $ratings = $entityManager
             -> getRepository(Rating::class)
-            -> findByResume($resume)
+            -> findByResume($id)
         ;
 
         $owners = $entityManager
