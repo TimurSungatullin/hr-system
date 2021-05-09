@@ -191,7 +191,7 @@
                 <div class="block">
                     <div>
                         <div>
-                            <span> Оценка HR: </span>
+                            <span> Оценка {{ rating.role }}: </span>
                             <div class="rating-mini">
                                 {% for i in range(1, 5) %}
                                     <span {% if i <= rating.score %} class="active" {% endif %}></span>

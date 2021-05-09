@@ -30,11 +30,17 @@ class MainController extends AbstractController
         AdditionalGlobalContext $additionalContext): Response
     {
         $user = $this -> getUser();
-        $resumes = $user -> getActiveResumes();
+
+        $status = $request -> query -> get('status');
+        $vacancy = $request -> query -> get('vacancy');
+
+
         $activeRole = $additionalContext -> getActiveRole();
-        # TODO Разные $resumes в зависимости от роли
         if ($activeRole -> getCode() == Role::CUSTOMER) {
-            $resumes = $user -> getResumeToOwners();
+            $resumes = $user -> getResumeToOwners($status, $vacancy);
+        }
+        else {
+            $resumes = $user -> getActiveResumes($status, $vacancy);
         }
 
         $entityManager = $this->getDoctrine()->getManager();
@@ -47,21 +53,6 @@ class MainController extends AbstractController
             -> getRepository(Vacancy::class)
             -> findAll()
         ;
-
-        $status = $request -> query -> get('status');
-        $vacancy = $request -> query -> get('vacancy');
-
-        if ($status) {
-            $resumes = array_filter($resumes, function ($resume) use ($status) {
-               return $resume->getLastStatus()->getStatus()->getId() == $status;
-            });
-        }
-
-        if ($vacancy) {
-            $resumes = array_filter($resumes, function ($resume) use ($vacancy) {
-                return $resume->getVacancy()->getId() == $vacancy;
-            });
-        }
 
         return $this -> render(
             'main/main.html.twig',

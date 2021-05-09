@@ -2,8 +2,10 @@
 {% block javascripts %}
     <script>
         $(document).ready(function () {
-            let filter = $('#filters');
-            filter.hide()
+            {% if not (app.request.get('vacancy') or app.request.get('status')) %}
+                $('#filters').hide()
+            {% endif %}
+
         });
 
         function changeFilter() {

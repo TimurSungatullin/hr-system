@@ -13,6 +13,7 @@ use App\Entity\User;
 use App\Entity\Vacancy;
 use App\Form\RatingFormType;
 use App\Form\ResumeFormType;
+use App\Services\AdditionalGlobalContext;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -34,13 +35,13 @@ class RatingController extends AbstractController
     /**
      * @Route("/add_comment", name="add_comment")
      * @param Request $request
-     * @param AuthenticationUtils $authenticationUtils
+     * @param AdditionalGlobalContext $additionalContext
      * @param SerializerInterface $serializer
      * @return JsonResponse
      */
     public function addComment(
         Request $request,
-        AuthenticationUtils $authenticationUtils,
+        AdditionalGlobalContext $additionalContext,
         SerializerInterface $serializer): JsonResponse
     {
         $user = $this->getUser();
@@ -78,6 +79,7 @@ class RatingController extends AbstractController
             -> setResume($resume)
             -> setVacancy($resume -> getVacancy())
             -> setComment($comment)
+            -> setRole($additionalContext -> getActiveRole())
         ;
 
         $entityManager -> persist($rating);

@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Resume;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,32 +20,40 @@ class ResumeRepository extends ServiceEntityRepository
         parent::__construct($registry, Resume::class);
     }
 
-    // /**
-    //  * @return Resume[] Returns an array of Resume objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @param array $criteria
+     * @param null $start
+     * @param null $end
+     * @param null $vacancy
+     * @return Resume[] Returns an array of Resume objects
+     */
+    public function findByRangeDate(array $criteria, $start = null, $end = null): array
     {
-        return $this->createQueryBuilder('r')
-            ->andWhere('r.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('r.id', 'ASC')
-            ->setMaxResults(10)
+        $builder = $this->createQueryBuilder('r');
+        foreach ($criteria as $field => $value) {
+            $builder = $builder
+                -> andWhere('r.'.$field.' = :'.$field.'val')
+                -> setParameter($field.'val', $value)
+            ;
+        }
+
+        if ($start) {
+            $builder = $builder
+                -> andWhere('r.created_at > :start')
+                -> setParameter('start', $start)
+            ;
+        }
+
+        if ($end) {
+            $builder = $builder
+                -> andWhere('r.created_at < :end')
+                -> setParameter('end', $end)
+            ;
+        }
+
+        return $builder
             ->getQuery()
             ->getResult()
         ;
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Resume
-    {
-        return $this->createQueryBuilder('r')
-            ->andWhere('r.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

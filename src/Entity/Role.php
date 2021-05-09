@@ -39,9 +39,15 @@ class Role
      */
     private $users;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Rating::class, mappedBy="role", orphanRemoval=true)
+     */
+    private $ratings;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        $this->ratings = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -105,5 +111,35 @@ class Role
     public function isCustomer(): bool
     {
         return $this -> getCode() == self::CUSTOMER;
+    }
+
+    /**
+     * @return Collection|Rating[]
+     */
+    public function getRatings(): Collection
+    {
+        return $this->ratings;
+    }
+
+    public function addRating(Rating $rating): self
+    {
+        if (!$this->ratings->contains($rating)) {
+            $this->ratings[] = $rating;
+            $rating->setRole($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRating(Rating $rating): self
+    {
+        if ($this->ratings->removeElement($rating)) {
+            // set the owning side to null (unless already changed)
+            if ($rating->getRole() === $this) {
+                $rating->setRole(null);
+            }
+        }
+
+        return $this;
     }
 }

@@ -66,6 +66,12 @@ class Rating
      */
     private $statusName;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Role::class, inversedBy="ratings")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $role;
+
     public function __construct() {
         $this->date = new DateTime();
     }
@@ -162,6 +168,18 @@ class Rating
     public function getStatusName(): string
     {
         return $this->status->getName();
+    }
+
+    public function getRole(): ?Role
+    {
+        return $this->role;
+    }
+
+    public function setRole(?Role $role): self
+    {
+        $this->role = $role;
+
+        return $this;
     }
 
 }

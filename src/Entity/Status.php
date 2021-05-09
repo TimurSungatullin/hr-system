@@ -30,6 +30,8 @@ class Status
     private $statusHistories;
 
     public const DEFAULT_STATUS = 1;
+    public const INVITE_STATUS = 5;
+    public const REFUSING_STATUS = 6;
 
     public function __construct()
     {

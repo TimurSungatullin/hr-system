@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints\Date;
 
 /**
  * @ORM\Entity(repositoryClass=ResumeRepository::class)
@@ -121,6 +122,11 @@ class Resume
      */
     private $deleted;
 
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $created_at;
+
     public function __construct()
     {
         $this->historyVacancies = new ArrayCollection();
@@ -129,6 +135,7 @@ class Resume
         $this->meetings = new ArrayCollection();
         $this->statusHistories = new ArrayCollection();
         $this->deleted = false;
+        $this->created_at = new DateTime();
     }
 
     public function getId(): ?int
@@ -500,6 +507,48 @@ class Resume
         $this->deleted = $deleted;
 
         return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $created_at): self
+    {
+        $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    public function getRatingsByRole(string $role): array
+    {
+        return array_filter(
+            $this -> ratings -> toArray(),
+            function (Rating $rating) use ($role) {
+                return $rating -> getRole() -> getCode() == $role;
+            }
+        );
+    }
+
+    public function getAverageRating(?string $role = null): ?float
+    {
+        $ratings = $this -> ratings -> toArray();
+
+        if ($role == Role::HR) {
+            $ratings = $this -> getRatingsByRole(ROLE::HR);
+        }
+        elseif ($role == Role::CUSTOMER) {
+            $ratings = $this -> getRatingsByRole(ROLE::CUSTOMER);
+        }
+
+        if (!$ratings) {
+            return null;
+        }
+
+        return array_reduce($ratings, function ($carry, Rating $rating) {
+            return $carry + $rating -> getScore();
+        }) / count($ratings);
     }
 
 }

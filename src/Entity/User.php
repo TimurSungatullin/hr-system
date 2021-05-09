@@ -229,11 +229,24 @@ class User implements UserInterface
         return $this->resumes;
     }
 
-    public function getActiveResumes(): array
+    public function getActiveResumes(int $status = null, int $vacancy = null): array
     {
-        return array_filter($this->resumes -> toArray(), function ($resume) {
+        $resumes = array_filter($this->resumes -> toArray(), function ($resume) {
             return !$resume -> getDeleted();
         });
+
+        if ($status) {
+            $resumes = array_filter($resumes, function ($resume) use ($status) {
+                return $resume->getLastStatus()->getStatus()->getId() == $status;
+            });
+        }
+
+        if ($vacancy) {
+            $resumes = array_filter($resumes, function ($resume) use ($vacancy) {
+                return $resume->getVacancy()->getId() == $vacancy;
+            });
+        }
+        return $resumes;
     }
 
     public function addResume(Resume $resume): self
@@ -259,11 +272,36 @@ class User implements UserInterface
     }
 
     /**
-     * @return Collection|ResumeToOwner[]
+     * @param int|null $vacancy
+     * @param int|null $status
+     * @return Collection
      */
-    public function getResumeToOwners(): Collection
+    public function getResumeToOwners(int $status = null, int $vacancy = null): array
     {
-        return $this->resumeToOwners;
+        $resumes = $this->resumeToOwners;
+        if ($status) {
+            $resumes = array_filter(
+                $resumes->toArray(),
+                function ($resume) use ($status) {
+                    return $resume
+                            ->getResume()
+                            ->getLastStatus()
+                            ->getStatus()
+                            ->getId() == $status;
+            });
+        }
+
+        if ($vacancy) {
+            $resumes = array_filter(
+                $resumes->toArray(),
+                function (ResumeToOwner $resume) use ($vacancy) {
+                    return $resume
+                            ->getResume()
+                            ->getVacancy()
+                            ->getId() == $vacancy;
+            });
+        }
+        return $resumes;
     }
 
     public function addResumeToOwner(ResumeToOwner $resumeToOwner): self
