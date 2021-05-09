@@ -72,6 +72,11 @@ class Rating
      */
     private $role;
 
+    /**
+     * @Groups({"add_comment"})
+     */
+    private $roleName;
+
     public function __construct() {
         $this->date = new DateTime();
     }
@@ -168,6 +173,11 @@ class Rating
     public function getStatusName(): string
     {
         return $this->status->getName();
+    }
+
+    public function getRoleName(): string
+    {
+        return $this->role->getName();
     }
 
     public function getRole(): ?Role

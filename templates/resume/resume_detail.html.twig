@@ -39,9 +39,19 @@
                 success: function (data, status) {
                     data = JSON.parse(data);
                     // Текстовое сообщение
-                    let newBlock = $('.block').clone()[0];
-                    newBlock.getElementsByTagName('textarea')[0].innerText = data['comment']
+                    let newBlock = $('.example').clone()[0];
+                    let date = new Date(data['date'])
+                    newBlock.getElementsByTagName('textarea')[0].innerText = data['comment'];
+                    newBlock.querySelectorAll('#role')[0].innerText = data['roleName'];
+                    newBlock.querySelectorAll('#date')[0].innerText = date.toLocaleDateString();
+                    newBlock.querySelectorAll('#status')[0].innerText = data['statusName'];
+                    let rating = newBlock.getElementsByClassName('rating-mini');
+                    let stars = $(rating).children()
+                    for (let i = 0; i < data['score']; i ++) {
+                        $(stars[i]).addClass('active');
+                    }
                     $(newBlock).prependTo(".resume-all-comments");
+                    $(newBlock).removeClass('example')
                 }
             })
         }
@@ -187,6 +197,28 @@
                 </form>
             </div>
             <div class="resume-all-comments">
+                <div class="block example">
+                    <div>
+                        <div>
+                            <span> Оценка <span id="role"></span>: </span>
+                            <div class="rating-mini">
+                                {% for i in range(1, 5) %}
+                                    <span></span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div>
+                            <span id="status"></span>
+                        </div>
+                    </div>
+                    <div class="resume-comment-text">
+                        <textarea id="comment" disabled></textarea>
+                    </div>
+                    <div>
+                        <span></span>
+                        <span id="date"></span>
+                    </div>
+                </div>
                 {% for rating in ratings %}
                 <div class="block">
                     <div>

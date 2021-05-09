@@ -571,3 +571,11 @@ a:hover {
 .filter-icon:hover {
   cursor: pointer;
 }
+
+.resume-all-comments .example {
+  display: none;
+}
+
+.resume-all-comments #role {
+  margin: 0;
+}
