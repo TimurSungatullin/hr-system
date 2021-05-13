@@ -4,25 +4,15 @@
 namespace App\Controller;
 
 
-use App\Entity\HistoryVacancy;
 use App\Entity\Rating;
 use App\Entity\Resume;
 use App\Entity\Status;
-use App\Entity\StatusHistory;
-use App\Entity\User;
-use App\Entity\Vacancy;
-use App\Form\RatingFormType;
-use App\Form\ResumeFormType;
 use App\Services\AdditionalGlobalContext;
-use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Exception\ValidatorException;
 
 /**
  * Class RatingController
@@ -52,13 +42,17 @@ class RatingController extends AbstractController
 
         $entityManager = $this -> getDoctrine() -> getManager();
 
+        if (!$statusId) {
+            throw new ValidatorException('Необхимо выбрать статус');
+        }
+
         $status = $entityManager
             -> getRepository(Status::class)
             -> find($statusId)
         ;
 
         if (!$status) {
-            # TODO raise ошибки
+            throw new ValidatorException('Статус не найден');
         }
 
         $resume = $entityManager
@@ -67,11 +61,10 @@ class RatingController extends AbstractController
         ;
 
         if (!$resume) {
-            # TODO Ошибки
+            throw new ValidatorException('Резюме не найдено');
         }
 
         $rating = new Rating();
-        # TODO Ошибки/Ассерты
         $rating
             -> setUser($user)
             -> setScore($score)

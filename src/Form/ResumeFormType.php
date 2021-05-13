@@ -9,6 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\BirthdayType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -22,7 +23,7 @@ class ResumeFormType extends AbstractType
             ->add('filePhoto', FileType::class, [
                 'required' => false
             ])
-            ->add('wage', NumberType::class, [
+            ->add('wage', TextType::class, [
                 'required' => false
             ])
             ->add('secondName', TextType::class, [
@@ -64,14 +65,14 @@ class ResumeFormType extends AbstractType
                     ])
                 ]
             ])
-            ->add('graduation', TextType::class, [
+            ->add('graduation', TextareaType::class, [
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Обязательное поле',
                     ])
                 ]
             ])
-            ->add('workExperience', TextType::class, [
+            ->add('workExperience', TextareaType::class, [
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Обязательное поле',

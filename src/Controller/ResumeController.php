@@ -15,14 +15,17 @@ use App\Entity\User;
 use App\Entity\StatusHistory;
 use App\Entity\Vacancy;
 use App\Form\ResumeFormType;
+use App\Services\ResumeParser;
 use DateTime;
 use Exception;
+use IntlDateFormatter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Validator\Exception\ValidatorException;
 
 /**
  * Class ResumeController
@@ -35,96 +38,99 @@ class ResumeController extends AbstractController
     /**
      * @Route("/add", name="add_resume")
      * @param Request $request
-     * @param AuthenticationUtils $authenticationUtils
      * @return Response
      */
-    public function addResume(
-        Request $request,
-        AuthenticationUtils $authenticationUtils): Response
+    public function addResume(Request $request): Response
     {
-        # TODO только для hr
         $user = $this->getUser();
 
         $resume = new Resume();
         $form = $this->createForm(ResumeFormType::class, $resume);
         $form->handleRequest($request);
         $entityManager = $this->getDoctrine()->getManager();
-        if ($form->isSubmitted() && $form->isValid()) {
-            $resume -> setHr($user);
+        $error = '';
+        try {
+            if ($form->isSubmitted() && $form->isValid()) {
+                $resume->setHr($user);
 
-            $photo = $resume->filePhoto;
+                $photo = $resume->filePhoto;
 
-            $photoName = md5(uniqid()) . '.' . $photo -> guessExtension();
+                if ($photo) {
+                    $photoName = md5(uniqid()) . '.' . $photo->guessExtension();
 
-            $photo->move(
-                $_SERVER['UPLOAD_FILE_DIR'],
-                $photoName
-            );
+                    $photo->move(
+                        $_SERVER['UPLOAD_PHOTO_DIR'],
+                        $photoName
+                    );
 
-            $resume -> setPhoto($photoName);
+                    $resume->setPhoto($photoName);
+                }
 
-            $vacancyId = $request->request->get('vacancy');
-            $vacancy = $entityManager
-                -> getRepository(Vacancy::class)
-                -> find($vacancyId)
-            ;
-            if (!$vacancy) {
-                $error = 'Такой вакансии нет';
+                $vacancyId = $request->request->get('vacancy');
+
+                if (!$vacancyId) {
+                    $error = 'Необходимо выбрать вакансию';
+                    throw new ValidatorException($error);
+                }
+
+                $vacancy = $entityManager
+                    ->getRepository(Vacancy::class)
+                    ->find($vacancyId);
+
+                if (!$vacancy) {
+                    $error = 'Такой вакансии нет';
+                    throw new ValidatorException($error);
+                }
+
+                if (!$user->hasAccessVacancy($vacancy)) {
+                    $error = 'Данный пользователь не может добавлять резюме с этой вакансией';
+                    throw new ValidatorException($error);
+                }
+
+                $history = new HistoryVacancy();
+                $history
+                    ->setResume($resume)
+                    ->setVacancy($vacancy)
+                    ->setDate(new DateTime());
+
+                $status = $entityManager
+                    ->getRepository(Status::class)
+                    ->find(Status::DEFAULT_STATUS);
+                $history_status = new StatusHistory();
+                $history_status
+                    ->setResume($resume)
+                    ->setStatus($status)
+                    ->setAuthor($user);
+
+                $entityManager->persist($resume);
+                $entityManager->persist($history);
+                $entityManager->persist($history_status);
+
+                $entityManager->flush();
+
+
+                return $this->redirectToRoute('main');
             }
-
-            if (!$user -> hasAccessVacancy($vacancy)) {
-                # TODO try/catch?
-                $error = 'Данные пользователь не может добавлять резюме с этой вакансией';
-            }
-
-            $history = new HistoryVacancy();
-            $history
-                -> setResume($resume)
-                -> setVacancy($vacancy)
-                -> setDate(new DateTime())
-            ;
-
-            $status = $entityManager
-                -> getRepository(Status::class)
-                -> find(Status::DEFAULT_STATUS)
-            ;
-            $history_status = new StatusHistory();
-            $history_status
-                -> setResume($resume)
-                -> setStatus($status)
-                -> setAuthor($user)
-            ;
-
-            $entityManager -> persist($resume);
-            $entityManager -> persist($history);
-            $entityManager -> persist($history_status);
-
-            $entityManager->flush();
-
-
-            return $this->redirectToRoute('main');
+        }
+        catch (ValidatorException $ex) {
+            $error = $ex -> getMessage();
         }
 
         return $this->render(
             'resume/add_resume.html.twig',
             [
                 'form' => $form->createView(),
-                'error' => $form->getErrors(),
+                'error' => $error,
             ]
         );
     }
 
     /**
      * @Route("/{id}", name="resume_detail", methods={"GET"})
-     * @param Request $request
-     * @param AuthenticationUtils $authenticationUtils
      * @param string $id
      * @return Response
      */
-    public function getResume(
-        Request $request,
-        AuthenticationUtils $authenticationUtils,
-        string $id): Response
+    public function getResume(string $id): Response
     {
         $user = $this->getUser();
         $entityManager = $this->getDoctrine()->getManager();
@@ -173,8 +179,7 @@ class ResumeController extends AbstractController
      * @param string $id
      * @return Response
      */
-    public function deleteResume(
-        string $id): Response
+    public function deleteResume(string $id): Response
     {
         $entityManager = $this->getDoctrine()->getManager();
         $resume = $entityManager
@@ -196,12 +201,9 @@ class ResumeController extends AbstractController
     /**
      * @Route("/send", name="send_resume")
      * @param Request $request
-     * @param AuthenticationUtils $authenticationUtils
      * @return Response
      */
-    public function sendResume(
-        Request $request,
-        AuthenticationUtils $authenticationUtils): Response
+    public function sendResume(Request $request): Response
     {
         $user = $this->getUser();
         $owners = $request->request->get('owners');
@@ -238,13 +240,10 @@ class ResumeController extends AbstractController
     /**
      * @Route("/change_status", name="resume_change_status")
      * @param Request $request
-     * @param AuthenticationUtils $authenticationUtils
      * @return Response
      */
-    public function changeStatus(
-        Request $request,
-        AuthenticationUtils $authenticationUtils
-    ) {
+    public function changeStatus(Request $request): Response
+    {
         $user = $this->getUser();
 
         $statusId = $request->request->get('status');
@@ -279,14 +278,10 @@ class ResumeController extends AbstractController
     /**
      * @Route("/invite", name="invite")
      * @param Request $request
-     * @param AuthenticationUtils $authenticationUtils
      * @return Response
      */
-    public function inviteToMeet(
-        Request $request,
-        AuthenticationUtils $authenticationUtils): Response
+    public function inviteToMeet(Request $request): Response
     {
-        $user = $this->getUser();
         $users = $request->request->get('users');
         $resumeId = $request->request->get('resume');
         $date = $request->request->get('date');
@@ -328,5 +323,25 @@ class ResumeController extends AbstractController
         $entityManager -> flush();
 
         return new Response();
+    }
+
+    /**
+     * @Route("/load", name="load_resume")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function loadResume(Request $request): JsonResponse
+    {
+        $file = $request->files->get('file');
+        $fileName = md5(uniqid()) . '.' . $file -> guessExtension();
+        $file->move(
+            $_SERVER['UPLOAD_FILE_DIR'],
+            $fileName
+        );
+        $html = file_get_contents($_SERVER['UPLOAD_FILE_DIR'] . '/' . $fileName);
+
+        $resume = ResumeParser::parse($html);
+
+        return $this->json($resume);
     }
 }

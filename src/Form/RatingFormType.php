@@ -30,8 +30,7 @@ class RatingFormType extends AbstractType
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Выберите оценку',
-                    ],
-                    ),
+                    ]),
                     new Range([
                         'min' => 0,
                         'max' => 5,

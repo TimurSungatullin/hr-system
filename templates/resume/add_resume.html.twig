@@ -15,7 +15,6 @@
                 if (FileReader && file && file.length) {
                     let fr = new FileReader();
                     fr.onload = function () {
-                        debugger;
                         document.getElementById('photo').src = fr.result
                     }
 
@@ -23,6 +22,27 @@
                 }
                 else {
                     document.getElementById('photo').src = "{{ asset('assets/img/no_photo.png') }}";
+                }
+            });
+
+            $('#file').change(function (e) {
+                let files = e.target.files;
+                if (files && files.length) {
+                    let fd = new FormData;
+                    fd.append('file', files[0]);
+
+                    $.ajax({
+                        url: "{{ path('load_resume') }}",
+                        data: fd,
+                        method: 'POST',
+                        processData: false,
+                        contentType: false,
+                        success: function (data) {
+                            for (let key in data) {
+                                $('#resume_form_' + key).val(data[key]);
+                            }
+                        }
+                    })
                 }
             });
 
@@ -45,8 +65,8 @@
             })();
         });
 
-        function triggerInput() {
-            $('#resume_form_filePhoto').trigger('click');
+        function triggerInput(inputId) {
+            $(inputId).trigger('click');
         }
     </script>
 {% endblock %}
@@ -54,14 +74,17 @@
     {% include 'includes/header.html.twig' %}
     <div class="main">
         {{ form_start(form, {'attr': {'class': 'form-add-resume'}}) }}
-        <div class="my-custom-class-for-errors">
-            {{ form_errors(form) }}
-        </div>
+        {% if error %}
+            <div class="errors">
+                {{ error }}
+                {{ form_errors(form) }}
+            </div>
+        {% endif %}
             <div class="resume-main">
                 <div class="avatar">
                     <img src="{{ asset('assets/img/no_photo.png') }}" width="150" height="150" id="photo" alt="User photo">
                     {{ form_widget(form.filePhoto, {'attr': {'class': 'photo-load', 'accept': 'image/*'}}) }}
-                    <label for="file" onclick="triggerInput()" class="btn btn-tertiary js-labelFile">
+                    <label onclick="triggerInput('#resume_form_filePhoto')" class="btn btn-tertiary js-labelFile">
                         <i class="icon fa fa-check"></i>
                         <span class="js-fileName">Загрузить файл</span>
                     </label>
@@ -71,8 +94,8 @@
                         <label class="field-label" for="vacancy">
                             Вакансия
                         </label>
-                        <select name="vacancy" class="field-input form-control">
-                            <option value="0">---</option>
+                        <select name="vacancy" class="field-input form-control" required>
+                            <option></option>
                             {% for vacancy in userInfo.user.allVacancy %}
                                 <option value="{{ vacancy.id }}">{{ vacancy.name }}</option>
                             {% endfor %}
@@ -92,7 +115,8 @@
                 </div>
                 <div class="navbar-toggler">
                     <ul class="submenu">
-                        <li>Загрузить резюме</li>
+                        <input type="file" name="file" hidden id="file" accept=".html">
+                        <li onclick="triggerInput('#file')">Загрузить резюме</li>
                     </ul>
                 </div>
             </div>

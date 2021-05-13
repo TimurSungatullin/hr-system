@@ -37,9 +37,9 @@
 .resume-main {
   display: flex;
   justify-content: space-between;
-  width: 100%;
   margin-top: 20px;
   margin-bottom: 20px;
+  margin-left: 30px;
   position: relative;
 }
 
@@ -66,7 +66,8 @@
 }
 
 .field .field-input {
-  width: 300px;
+  width: 400px;
+  margin-left: 30px;
 }
 
 .resume-main .field {
@@ -110,12 +111,14 @@ h1 {
 }
 .form-add-resume {
   display: flex;
-  margin: 10px;
   flex-direction: column;
-  padding-right: 0;
+  padding: 0;
+}
+.form-add-resume input[type=submit] {
+  margin-top: 20px;
 }
 .field {
-  margin: 10px;
+  margin: 10px 10px 10px 30px;
 }
 .field-label {
   float: left;
@@ -124,7 +127,7 @@ h1 {
 .main .form-add-resume .field .field-input {
   display: block;
   color: #fff;
-  height: calc(1.5em + .75rem + 2px) !important;
+  height: calc(1.5em + .75rem + 2px);
 }
 form input {
   background-color: rgb(59, 59, 59)!important;
@@ -436,10 +439,6 @@ a:hover {
   width: auto;
 }
 
-.resume-main .navbar-toggler {
-  margin-left: 20px;
-}
-
 .flex-column {
   display: flex;
   flex-direction: column;
@@ -578,4 +577,31 @@ a:hover {
 
 .resume-all-comments #role {
   margin: 0;
+}
+
+
+body .main .form-add-resume .field textarea.field-input {
+  background-color: rgb(59, 59, 59);
+  color: #fff;
+  border: none;
+  height: 150px;
+  resize: none;
+}
+
+.field textarea:focus {
+  background-color: rgb(59, 59, 59);
+  color: #fff;
+  border: none;
+}
+
+.errors {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 20px;
+  color: red;
+}
+
+#addComment .error {
+  border: 1px SOLID red;
 }

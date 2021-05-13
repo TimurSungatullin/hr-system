@@ -48,7 +48,7 @@ final class Version20210314141835 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_D88926229D86650F ON rating (user_id_id)');
         $this->addSql('CREATE INDEX IDX_D8892622881ECFA7 ON rating (status_id_id)');
         $this->addSql('CREATE INDEX IDX_D8892622A60AE135 ON rating (vacancy_id_id)');
-        $this->addSql('CREATE TABLE resume (id INT NOT NULL, hr_id_id INT DEFAULT NULL, first_name VARCHAR(100) NOT NULL, second_name VARCHAR(100) NOT NULL, patronymic VARCHAR(100) DEFAULT NULL, phone VARCHAR(15) NOT NULL, email VARCHAR(50) DEFAULT NULL, graduation TEXT NOT NULL, work_experience TEXT DEFAULT NULL, wage VARCHAR(50) DEFAULT NULL, birth_date DATE DEFAULT NULL, city VARCHAR(255) NOT NULL,PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE resume (id INT NOT NULL, hr_id_id INT DEFAULT NULL, first_name VARCHAR(100) NOT NULL, second_name VARCHAR(100) NOT NULL, patronymic VARCHAR(100) DEFAULT NULL, phone VARCHAR(30) NOT NULL, email VARCHAR(50) DEFAULT NULL, graduation TEXT NOT NULL, work_experience TEXT DEFAULT NULL, wage VARCHAR(50) DEFAULT NULL, birth_date DATE DEFAULT NULL, city VARCHAR(255) NOT NULL,PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_60C1D0A05965760D ON resume (hr_id_id)');
         $this->addSql('CREATE TABLE resume_to_owner (id INT NOT NULL, resume_id_id INT NOT NULL, owner_id_id INT NOT NULL, is_read BOOLEAN NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_6ABBFDB9E3B35E3F ON resume_to_owner (resume_id_id)');

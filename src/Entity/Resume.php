@@ -39,7 +39,7 @@ class Resume
     private $patronymic;
 
     /**
-     * @ORM\Column(type="string", length=15)
+     * @ORM\Column(type="string", length=30)
      */
     private $phone;
 

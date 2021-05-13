@@ -31,29 +31,43 @@
         function addComment(e) {
             let form = $('#addComment');
             let data = form.serializeArray();
-            form[0].reset();
-            $.ajax({
-                url: "{{ path('add_comment') }}",
-                data: data,
-                method: 'POST',
-                success: function (data, status) {
-                    data = JSON.parse(data);
-                    // Текстовое сообщение
-                    let newBlock = $('.example').clone()[0];
-                    let date = new Date(data['date'])
-                    newBlock.getElementsByTagName('textarea')[0].innerText = data['comment'];
-                    newBlock.querySelectorAll('#role')[0].innerText = data['roleName'];
-                    newBlock.querySelectorAll('#date')[0].innerText = date.toLocaleDateString();
-                    newBlock.querySelectorAll('#status')[0].innerText = data['statusName'];
-                    let rating = newBlock.getElementsByClassName('rating-mini');
-                    let stars = $(rating).children()
-                    for (let i = 0; i < data['score']; i ++) {
-                        $(stars[i]).addClass('active');
+            form.validate({
+                rules: {
+                    comment: {
+                        required: true,
+                    },
+                    status: {
+                        required: true,
                     }
-                    $(newBlock).prependTo(".resume-all-comments");
-                    $(newBlock).removeClass('example')
+                },
+                submitHandler: function(form) {
+                    form.reset();
+                    $.ajax({
+                        url: "{{ path('add_comment') }}",
+                        data: data,
+                        method: 'POST',
+                        success: function (data, status) {
+                            data = JSON.parse(data);
+                            // Текстовое сообщение
+                            let newBlock = $('.example').clone()[0];
+                            let date = new Date(data['date'])
+                            newBlock.getElementsByTagName('textarea')[0].innerText = data['comment'];
+                            newBlock.querySelectorAll('#role')[0].innerText = data['roleName'];
+                            newBlock.querySelectorAll('#date')[0].innerText = date.toLocaleDateString();
+                            newBlock.querySelectorAll('#status')[0].innerText = data['statusName'];
+                            let rating = newBlock.getElementsByClassName('rating-mini');
+                            let stars = $(rating).children()
+                            for (let i = 0; i < data['score']; i ++) {
+                                $(stars[i]).addClass('active');
+                            }
+                            $(newBlock).prependTo(".resume-all-comments");
+                            $(newBlock).removeClass('example')
+                        }
+                    })
+                },
+                errorPlacement: function (error, item) {
                 }
-            })
+            });
         }
 
         function sendResume() {
@@ -176,11 +190,12 @@
                                 <label for="star-2" title="Оценка «2»"></label>
                                 <input type="radio" id="star-1" name="rating" value="1">
                                 <label for="star-1" title="Оценка «1»"></label>
+                                <input type="radio" id="star-0" name="rating" checked value="0">
                             </div>
                         </div>
                         <div>
                             <select name="status">
-                                <option selected>---</option>
+                                <option></option>
                                 {% for status in statuses %}
                                     <option value="{{ status.id }}">{{ status.name }}</option>
                                 {% endfor %}
@@ -191,7 +206,7 @@
                         <textarea name="comment"></textarea>
                     </div>
                     <input hidden type="number" value="{{ resume.id }}" name="resume">
-                    <button type="button" onclick="addComment()">
+                    <button type="submit" onclick="addComment()">
                         Добавить оценку
                     </button>
                 </form>
