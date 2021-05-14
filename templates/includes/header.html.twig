@@ -28,7 +28,7 @@
     {% endif %}
     {% if userInfo.activeRole.isAdmin %}
         <a href="{{ path('admin') }}">
-            <i class="fa fa-id-badge"></i>
+            <img width="40" height="40" src="{{ asset('assets/img/admin.png') }}">
         </a>
     {% endif %}
     <select id="changeRoles" class="select-roles">
