@@ -1,14 +1,20 @@
 <script>
     $(document).ready(function () {
         $('#changeRoles').change(function () {
-            $.ajax({
-                url: "{{ path('change_role') }}",
-                data: {role: this.selectedOptions[0].value},
-                method: 'POST',
-                success: function () {
-                    location.reload();
-                }
-            })
+            let value = this.selectedOptions[0].value;
+            if (value === 'logout') {
+                location.href = "{{ path('app_logout') }}"
+            }
+            else {
+                $.ajax({
+                    url: "{{ path('change_role') }}",
+                    data: {role: value},
+                    method: 'POST',
+                    success: function () {
+                        location.reload();
+                    }
+                });
+            }
         })
     })
 </script>
@@ -31,5 +37,6 @@
                 {{ role.name }}
             </option>
         {% endfor %}
+        <option value="logout">Выйти</option></a>
     </select>
 </div>
