@@ -113,6 +113,16 @@ class Role
         return $this -> getCode() == self::CUSTOMER;
     }
 
+    public function isHR(): bool
+    {
+        return $this -> getCode() == self::HR;
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this -> getCode() == self::ADMIN;
+    }
+
     /**
      * @return Collection|Rating[]
      */

@@ -87,7 +87,7 @@
                 </div>
             </a>
         {% endfor %}
-        {% if not userInfo.activeRole.isCustomer %}
+        {% if userInfo.activeRole.isHR %}
             <a href="{{ path('add_resume') }}">
                 <button>
                     Добавить резюме

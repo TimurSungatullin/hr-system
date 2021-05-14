@@ -184,11 +184,16 @@ a:hover {
 }
 
 .select-status {
-  margin: 0;
+  margin: 0 20px 0 0;
+  text-align-last: end;
 }
 
 .resume-all-comments .block {
   border-bottom: 20px SOLID #222226;
+}
+
+.resume-all-comments .customer-block {
+  background-color: #333;
 }
 
 .resume-add-comments div, .resume-all-comments div div {

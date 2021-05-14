@@ -23,6 +23,48 @@ td, a, h1, span, label {
     color: #fff!important;
 }
 
+td {
+    background: #444446!important;
+}
+
+th {
+    background: #444446!important;
+}
+
+td:hover {
+    background: #444446!important;
+}
+
+tr:hover {
+    background: #444446!important;
+}
+
+tr {
+    background: #444446!important;
+}
+
+form {
+    background: #444446!important;
+}
+
+.form-widget span, .form-widget li {
+    background: rgb(59, 59, 59)!important;
+    color: #fff!important;
+    border: none!important;
+}
+
+.select2-selection__choice__remove {
+    border-style: none!important;
+}
+
+.select2-results__options li {
+    background: rgb(59, 59, 59)!important;
+}
+
+.badge-secondary {
+    background-color: inherit;
+}
+
 .content-wrapper, .content {
     background-color: #444446;
     color: #fff;

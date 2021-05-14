@@ -15,12 +15,10 @@ use App\Entity\User;
 use App\Entity\StatusHistory;
 use App\Entity\Vacancy;
 use App\Form\ResumeFormType;
+use App\Services\AdditionalGlobalContext;
 use App\Services\ResumeParser;
 use DateTime;
-use Exception;
-use IntlDateFormatter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,18 +34,28 @@ class ResumeController extends AbstractController
 {
 
     /**
-     * @Route("/add", name="add_resume")
+     * @Route("/add/{id}", name="add_resume")
      * @param Request $request
+     * @param int|null $id
      * @return Response
      */
-    public function addResume(Request $request): Response
+    public function addResume(Request $request, ?int $id = null): Response
     {
         $user = $this->getUser();
+        $entityManager = $this->getDoctrine()->getManager();
 
-        $resume = new Resume();
+        if ($id) {
+            $resume = $entityManager
+                -> getRepository(Resume::class)
+                -> find($id)
+            ;
+        }
+        else {
+            $resume = new Resume();
+        }
+
         $form = $this->createForm(ResumeFormType::class, $resume);
         $form->handleRequest($request);
-        $entityManager = $this->getDoctrine()->getManager();
         $error = '';
         try {
             if ($form->isSubmitted() && $form->isValid()) {
@@ -121,6 +129,7 @@ class ResumeController extends AbstractController
             [
                 'form' => $form->createView(),
                 'error' => $error,
+                'resume' => $resume,
             ]
         );
     }
@@ -128,9 +137,10 @@ class ResumeController extends AbstractController
     /**
      * @Route("/{id}", name="resume_detail", methods={"GET"})
      * @param string $id
+     * @param AdditionalGlobalContext $additionalContext
      * @return Response
      */
-    public function getResume(string $id): Response
+    public function getResume(string $id, AdditionalGlobalContext $additionalContext): Response
     {
         $user = $this->getUser();
         $entityManager = $this->getDoctrine()->getManager();
@@ -139,14 +149,23 @@ class ResumeController extends AbstractController
             -> find($id)
         ;
 
+        $activeRole = $additionalContext -> getActiveRole();
+        if ($activeRole -> getCode() == Role::CUSTOMER) {
+            $resumeToOwner = $entityManager
+                -> getRepository(ResumeToOwner::class)
+                -> findBy(['owner' => $user])[0] ?? null;
+            if (!$resumeToOwner) {
+                return $this->redirectToRoute('main');
+            }
+            $resumeToOwner -> setIsRead(true);
+            $entityManager->persist($resumeToOwner);
+            $entityManager->flush();
+        }
+
         $statuses = $entityManager
             -> getRepository(Status::class)
             -> findAll()
         ;
-
-        if (!$resume) {
-            #TODO raise 404 ошибки или редирект на главную с сообщением
-        }
 
         $ratings = $entityManager
             -> getRepository(Rating::class)
@@ -187,9 +206,6 @@ class ResumeController extends AbstractController
             -> find($id)
         ;
 
-        if (!$resume) {
-        }
-
         $resume -> setDeleted(true);
 
         $entityManager -> persist($resume);
@@ -214,10 +230,6 @@ class ResumeController extends AbstractController
             -> getRepository(Resume::class)
             -> find($resumeId)
         ;
-
-        if (!$resume) {
-            #TODO raise 404 ошибки или редирект на главную с сообщением
-        }
 
         foreach ($owners as $ownerId) {
             $owner = $entityManager
@@ -284,7 +296,7 @@ class ResumeController extends AbstractController
     {
         $users = $request->request->get('users');
         $resumeId = $request->request->get('resume');
-        $date = $request->request->get('date');
+        $dateStr = $request->request->get('date');
 
         $entityManager = $this->getDoctrine()->getManager();
         $resume = $entityManager
@@ -292,21 +304,15 @@ class ResumeController extends AbstractController
             -> find($resumeId)
         ;
 
-        if (!$resume) {
-            #TODO raise 404 ошибки или редирект на главную с сообщением
-        }
-
-        $date = Datetime::createFromFormat('Y-m-d\TH:i', $date);
-
-        if (!$date) {
-            # TODO некорректная дата
-        }
+        $date = Datetime::createFromFormat('Y-m-d\TH:i', $dateStr);
 
         $meet = new Meeting();
         $meet
             -> setResume($resume)
             -> setDateMeet($date)
         ;
+
+        $emails = [];
 
         foreach ($users as $userId) {
             $user = $entityManager
@@ -316,13 +322,24 @@ class ResumeController extends AbstractController
 
             if ($user) {
                 $meet -> addUser($user);
+                $emails[] = $user -> getEmail();
             }
         }
 
         $entityManager -> persist($meet);
         $entityManager -> flush();
 
-        return new Response();
+        $url = 'https://outlook.live.com/calendar/0/deeplink/compose';
+        $params = [
+            'body' => 'ФИО кандидата: '.$resume->getFullName()."<br>Вакансия: ".$resume->getVacancy(),
+            'startdt' => $dateStr,
+            'subject' => 'Встреча с кандидатом',
+            'to' => implode(',', $emails),
+        ];
+
+        $params = str_replace('+', '%20', http_build_query($params));
+
+        return new Response($url.'?'.$params);
     }
 
     /**

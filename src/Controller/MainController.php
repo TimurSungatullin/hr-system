@@ -33,17 +33,22 @@ class MainController extends AbstractController
 
         $status = $request -> query -> get('status');
         $vacancy = $request -> query -> get('vacancy');
+        $entityManager = $this->getDoctrine()->getManager();
 
 
         $activeRole = $additionalContext -> getActiveRole();
         if ($activeRole -> getCode() == Role::CUSTOMER) {
             $resumes = $user -> getResumeToOwners($status, $vacancy);
         }
+        elseif ($activeRole -> getCode() == Role::ADMIN) {
+            $resumes = $entityManager
+                ->getRepository(Resume::class)
+                ->findBy(['deleted' => False]);
+        }
         else {
             $resumes = $user -> getActiveResumes($status, $vacancy);
         }
 
-        $entityManager = $this->getDoctrine()->getManager();
         $statuses = $entityManager
             -> getRepository(Status::class)
             -> findAll()

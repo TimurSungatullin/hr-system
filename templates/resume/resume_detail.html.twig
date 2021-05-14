@@ -93,7 +93,6 @@
                 'resume': {{ resume.id }},
                 'date': $('#dateMeet').val(),
             }
-            debugger;
             $.ajax({
                 url: "{{ path('invite') }}",
                 data: data,
@@ -101,6 +100,7 @@
                 success: function (data, status) {
                     $('#inviteToMeet').modal('hide');
                     $('.modal-body select').val(null).trigger('change');
+                    window.open(data);
                 }
             })
         }
@@ -122,22 +122,25 @@
     {% include 'includes/header.html.twig' %}
     <div class="main">
         <div class="resume-buttons">
-            <div></div>
-            <div>
-                <button data-toggle="modal" data-target="#inviteToMeet">Пригласить</button>
-                <button>Отказать</button>
-            </div>
-            <div class="navbar-dark">
-                <span class="navbar-toggler-icon"></span>
-            </div>
-            <div class="navbar-toggler">
-                <ul class="submenu">
-                    <li><span data-toggle="modal" data-target="#sendOwnerModal">
-                        Отправить заказчику
-                    </span></li>
-                    <li onclick="deleteResume()">Удалить</li>
-                </ul>
-            </div>
+            {% if userInfo.activeRole.isHR %}
+                <div></div>
+                <div>
+                    <button data-toggle="modal" data-target="#inviteToMeet">Пригласить</button>
+                    <button>Отказать</button>
+                </div>
+                <div class="navbar-dark">
+                    <span class="navbar-toggler-icon"></span>
+                </div>
+                <div class="navbar-toggler">
+                    <ul class="submenu">
+                        <li><span data-toggle="modal" data-target="#sendOwnerModal">
+                            Отправить заказчику
+                        </span></li>
+                        <a href="{{ path('add_resume', {'id': resume.id }) }}"><li>Редактировать</li></a>
+                        <li onclick="deleteResume()">Удалить</li>
+                    </ul>
+                </div>
+            {% endif %}
         </div>
         <div class="resume-info">
             <div>
@@ -174,6 +177,7 @@
             </div>
         </div>
         <div class="resume-comments">
+            {% if not userInfo.activeRole.isAdmin %}
             <div class="resume-add-comments">
                 <form method="post" id="addComment">
                     <div>
@@ -211,6 +215,7 @@
                     </button>
                 </form>
             </div>
+            {% endif %}
             <div class="resume-all-comments">
                 <div class="block example">
                     <div>
@@ -235,28 +240,28 @@
                     </div>
                 </div>
                 {% for rating in ratings %}
-                <div class="block">
-                    <div>
+                    <div class="block {% if rating.role.isCustomer %} customer-block{% endif %}">
                         <div>
-                            <span> Оценка {{ rating.role }}: </span>
-                            <div class="rating-mini">
-                                {% for i in range(1, 5) %}
-                                    <span {% if i <= rating.score %} class="active" {% endif %}></span>
-                                {% endfor %}
+                            <div>
+                                <span> Оценка {{ rating.role }}а: </span>
+                                <div class="rating-mini">
+                                    {% for i in range(1, 5) %}
+                                        <span {% if i <= rating.score %} class="active" {% endif %}></span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div>
+                                <span>{{ rating.status.name }}</span>
                             </div>
                         </div>
+                        <div class="resume-comment-text">
+                                <textarea id="comment" disabled>{{ rating.comment }}</textarea>
+                        </div>
                         <div>
-                            <span>{{ rating.status.name }}</span>
+                            <span></span>
+                            <span>{{ rating.date|date('d.m.y') }}</span>
                         </div>
                     </div>
-                    <div class="resume-comment-text">
-                            <textarea id="comment" disabled>{{ rating.comment }}</textarea>
-                    </div>
-                    <div>
-                        <span></span>
-                        <span>{{ rating.date|date('d.m.y') }}</span>
-                    </div>
-                </div>
                 {% endfor %}
             </div>
         </div>

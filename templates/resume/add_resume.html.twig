@@ -82,7 +82,12 @@
         {% endif %}
             <div class="resume-main">
                 <div class="avatar">
-                    <img src="{{ asset('assets/img/no_photo.png') }}" width="150" height="150" id="photo" alt="User photo">
+                    {% if resume.photo %}
+                        {% set photo_url = 'assets/img/resume/' ~ resume.photo %}
+                    {% else %}
+                        {% set photo_url = 'assets/img/no_photo.png' %}
+                    {% endif %}
+                    <img src="{{ asset(photo_url) }}" width="150" height="150" id="photo" alt="User photo">
                     {{ form_widget(form.filePhoto, {'attr': {'class': 'photo-load', 'accept': 'image/*'}}) }}
                     <label onclick="triggerInput('#resume_form_filePhoto')" class="btn btn-tertiary js-labelFile">
                         <i class="icon fa fa-check"></i>
@@ -97,7 +102,13 @@
                         <select name="vacancy" class="field-input form-control" required>
                             <option></option>
                             {% for vacancy in userInfo.user.allVacancy %}
-                                <option value="{{ vacancy.id }}">{{ vacancy.name }}</option>
+                                <option
+                                        value="{{ vacancy.id }}"
+                                        {% if vacancy.id == resume.getVacancy().id %}
+                                            selected
+                                        {% endif %}>
+                                    {{ vacancy.name }}
+                                </option>
                             {% endfor %}
                         </select>
                     </div>

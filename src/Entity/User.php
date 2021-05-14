@@ -278,10 +278,10 @@ class User implements UserInterface
      */
     public function getResumeToOwners(int $status = null, int $vacancy = null): array
     {
-        $resumes = $this->resumeToOwners;
+        $resumes = $this->resumeToOwners -> toArray();
         if ($status) {
             $resumes = array_filter(
-                $resumes->toArray(),
+                $resumes,
                 function ($resume) use ($status) {
                     return $resume
                             ->getResume()
@@ -293,7 +293,7 @@ class User implements UserInterface
 
         if ($vacancy) {
             $resumes = array_filter(
-                $resumes->toArray(),
+                $resumes,
                 function (ResumeToOwner $resume) use ($vacancy) {
                     return $resume
                             ->getResume()

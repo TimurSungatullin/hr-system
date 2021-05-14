@@ -20,6 +20,11 @@
         </a>
         <span><img class="filter-icon" onclick="changeFilter()" width="40" height="40" src="{{ asset('assets/img/filter.png') }}"></span>
     {% endif %}
+    {% if userInfo.activeRole.isAdmin %}
+        <a href="{{ path('admin') }}">
+            <i class="fa fa-id-badge"></i>
+        </a>
+    {% endif %}
     <select id="changeRoles" class="select-roles">
         {% for role in userInfo.roles %}
             <option value="{{ role.id }}" {% if role == userInfo.activeRole %} selected {% endif %}>

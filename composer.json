@@ -33,6 +33,7 @@
         "symfony/web-link": "5.0.*",
         "symfony/web-server-bundle": "*",
         "symfony/yaml": "5.0.*",
+        "symfony/google-mailer": "^4.4|^5.0",
       "ext-dom": "*"
     },
     "require-dev": {
