@@ -5,7 +5,6 @@ easy_admin:
         display_avatar: true
         name_property_path: 'fullName'
     design:
-            # 'dark' is the default value
         brand_color: '#81b9ba'
         assets:
             css:
@@ -14,8 +13,12 @@ easy_admin:
         menu:
             - { route: 'homepage', label: 'Вернуться на сайт', icon: 'home' }
             - { entity: 'User', label: 'Пользователи', icon: 'user' }
-            - { entity: 'Vacancy', label: 'Вакансии' }
-            - { entity: 'Group', label: 'Группы вакансий'}
+            - { entity: 'Vacancy', label: 'Вакансии',  icon: 'vcard-o'}
+            - { entity: 'Group', label: 'Группы вакансий', icon: 'object-ungroup'}
+            - { entity: 'Skill', label: 'Навыки', icon: 'bolt' }
+            - { entity: 'Test', label: 'Тесты', icon: 'file-o' }
+            - { entity: 'Question', label: 'Вопросы', icon: 'question-circle'}
+            - { entity: 'QuestionBlock', label: 'Блоки вопросов', icon: 'dedent' }
     entities:
         User:
             class: App\Entity\User
@@ -81,3 +84,15 @@ easy_admin:
                     - { property: 'hrs', label: 'Кому доступна вакансия' }
             edit:
                 title: 'Редактирования вакансии'
+
+        Test:
+            class: App\Entity\Test
+
+        Question:
+            class: App\Entity\Question
+
+        QuestionBlock:
+            class: App\Entity\QuestionBlock
+
+        Skill:
+            class: App\Entity\Skill
