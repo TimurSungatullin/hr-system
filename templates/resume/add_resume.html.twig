@@ -104,7 +104,7 @@
                             {% for vacancy in userInfo.user.allVacancy %}
                                 <option
                                         value="{{ vacancy.id }}"
-                                        {% if vacancy.id == resume.getVacancy().id %}
+                                        {% if resume.getVacancy() and vacancy.id == resume.getVacancy().id %}
                                             selected
                                         {% endif %}>
                                     {{ vacancy.name }}

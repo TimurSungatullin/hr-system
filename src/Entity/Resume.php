@@ -127,6 +127,21 @@ class Resume
      */
     private $created_at;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Assessment::class, mappedBy="resumes")
+     */
+    private $assessments;
+
+    /**
+     * @ORM\OneToMany(targetEntity=UserAnswer::class, mappedBy="resume", orphanRemoval=true)
+     */
+    private $userAnswers;
+
+    /**
+     * @ORM\OneToMany(targetEntity=UserTest::class, mappedBy="resume", orphanRemoval=true)
+     */
+    private $userTests;
+
     public function __construct()
     {
         $this->historyVacancies = new ArrayCollection();
@@ -136,6 +151,9 @@ class Resume
         $this->statusHistories = new ArrayCollection();
         $this->deleted = false;
         $this->created_at = new DateTime();
+        $this->assessments = new ArrayCollection();
+        $this->userAnswers = new ArrayCollection();
+        $this->userTests = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -424,6 +442,9 @@ class Resume
      */
     public function getVacancy(): ?Vacancy
     {
+        if (!$this->getHistoryVacancies()[0] ?? null) {
+            return null;
+        }
         return $this->getHistoryVacancies()[0]->getVacancy();
     }
 
@@ -549,6 +570,96 @@ class Resume
         return array_reduce($ratings, function ($carry, Rating $rating) {
             return $carry + $rating -> getScore();
         }) / count($ratings);
+    }
+
+    /**
+     * @return Collection|Assessment[]
+     */
+    public function getAssessments(): Collection
+    {
+        return $this->assessments;
+    }
+
+    public function addAssessment(Assessment $assessment): self
+    {
+        if (!$this->assessments->contains($assessment)) {
+            $this->assessments[] = $assessment;
+            $assessment->setResumes($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAssessment(Assessment $assessment): self
+    {
+        if ($this->assessments->removeElement($assessment)) {
+            // set the owning side to null (unless already changed)
+            if ($assessment->getResumes() === $this) {
+                $assessment->setResumes(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|UserAnswer[]
+     */
+    public function getUserAnswers(): Collection
+    {
+        return $this->userAnswers;
+    }
+
+    public function addUserAnswer(UserAnswer $userAnswer): self
+    {
+        if (!$this->userAnswers->contains($userAnswer)) {
+            $this->userAnswers[] = $userAnswer;
+            $userAnswer->setResume($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserAnswer(UserAnswer $userAnswer): self
+    {
+        if ($this->userAnswers->removeElement($userAnswer)) {
+            // set the owning side to null (unless already changed)
+            if ($userAnswer->getResume() === $this) {
+                $userAnswer->setResume(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|UserTest[]
+     */
+    public function getUserTests(): Collection
+    {
+        return $this->userTests;
+    }
+
+    public function addUserTest(UserTest $userTest): self
+    {
+        if (!$this->userTests->contains($userTest)) {
+            $this->userTests[] = $userTest;
+            $userTest->setResume($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserTest(UserTest $userTest): self
+    {
+        if ($this->userTests->removeElement($userTest)) {
+            // set the owning side to null (unless already changed)
+            if ($userTest->getResume() === $this) {
+                $userTest->setResume(null);
+            }
+        }
+
+        return $this;
     }
 
 }

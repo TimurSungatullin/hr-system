@@ -38,16 +38,4 @@ class HistoryVacancyRepository extends ServiceEntityRepository
             return null;
         }
     }
-
-    /*
-    public function findOneBySomeField($value): ?HistoryVacancy
-    {
-        return $this->createQueryBuilder('h')
-            ->andWhere('h.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

@@ -45,12 +45,18 @@ class Vacancy
      */
     private $hrs;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Skill::class, mappedBy="vacancies")
+     */
+    private $skills;
+
     public function __construct()
     {
         $this->historyVacancies = new ArrayCollection();
         $this->ratings = new ArrayCollection();
         $this->hrs = new ArrayCollection();
         $this->groups = new ArrayCollection();
+        $this->skills = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -188,5 +194,32 @@ class Vacancy
     public function __toString(): string
     {
         return $this->getName();
+    }
+
+    /**
+     * @return Collection|Skill[]
+     */
+    public function getSkills(): Collection
+    {
+        return $this->skills;
+    }
+
+    public function addSkill(Skill $skill): self
+    {
+        if (!$this->skills->contains($skill)) {
+            $this->skills[] = $skill;
+            $skill->addVacancy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSkill(Skill $skill): self
+    {
+        if ($this->skills->removeElement($skill)) {
+            $skill->removeVacancy($this);
+        }
+
+        return $this;
     }
 }
